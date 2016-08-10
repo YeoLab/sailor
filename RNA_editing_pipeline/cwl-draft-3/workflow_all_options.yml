@@ -1,0 +1,37 @@
+single_end: true # is read single-ended (for rmdup)
+known_snp: # known SNP in BED3 format
+  class: File
+  path: /projects/ps-yeolab/genomes/ce11/c_elegans.PRJNA13758.WS254.annotations.SNPandPointMutations.bed3
+reference: # reference genome
+  class: File
+  path: /home/bay001/projects/cwlref-runner/scripts/samtools/ce11.fa
+
+unsorted_bam: # aligned BAM file
+  class: File
+  path: WT_1.bam
+sorted_bam: WT_1.sorted.bam # sorted prefix for samtools sort
+rmdup_sorted_bam: WT_1.sorted.rmdup.bam # rmdup filename
+filtered_bam: WT_1.sorted.rmdup.filtered.bam # reads filtered for non-AG 
+output_gbcf: WT_1.gbcf # [g]eneral bcf format
+output_vcf: WT_1.vcf # vcf filename
+filtered_vcf: WT_1.filtered.vcf # vcf file filtered for non A-G/T-C SNVs
+noSNP_eff: WT_1.noSNP # filtered vcf file with known SNPs removed
+output_conf: WT_1.conf # filtered vcf file with confidence scores
+
+max_depth: 1000 # mpileup param
+calculate_baq: true # mpileup param
+calculate_per_sample: true # mpileup param
+tags: DP,DV,DPR,INFO/DPR,DP4,SP # mpileup param
+bcf_format: true # mpileup param
+variant_format: v # bcftools param
+use_consensus_caller: true # bcftools param
+call_alts: true # bcftools param
+junction_overhang: 10 # filter_reads param
+edge_mutation: 0 # filter_reads param
+non_ag: 1 # filter_reads param
+min_variant_coverage: 10 # filter_variants param
+edit_fraction: 0.01 # 
+alpha: 1
+beta: 1
+
+
