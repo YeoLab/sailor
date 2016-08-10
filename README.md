@@ -2,7 +2,9 @@
 
 This project requires a singularity image built from a Docker container. 
 
-To install Docker, please type: 
+To install Docker: 
+
+[Docker website](https://docs.docker.com/engine/installation/linux/ubuntulinux/)
 
 ```bash
 sudo apt-get update
@@ -21,8 +23,8 @@ apt-cache policy docker-engine
 sudo apt-get install docker-engine
 ```
  
-To install Singularity, please type: 
-
+To install Singularity: 
+[Singularity](http://singularity.lbl.gov/)
 ```bash
 sudo apt-get install singularity
 ```
