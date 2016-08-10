@@ -2,7 +2,8 @@
 
 This project requires a singularity image built from a Docker container. 
 
-To install Docker, please type: 
+To install [Docker](https://docs.docker.com/engine/installation/linux/ubuntulinux/): 
+
 
 ```bash
 sudo apt-get update
@@ -21,7 +22,8 @@ apt-cache policy docker-engine
 sudo apt-get install docker-engine
 ```
  
-To install Singularity, please type: 
+To install [Singularity](http://singularity.lbl.gov/): 
+
 
 ```bash
 sudo apt-get install singularity
@@ -46,4 +48,18 @@ mkdir -p /usr/local/var/singularity/mnt
 ```bash
 sudo singularity create -s 1500 rnae-ubuntu.img
 docker export rnae-ubuntu-label | sudo singularity import rnae-ubuntu.img
+```
+
+Finally, create and edit the /singularity executable (and make sure to make it executable):
+
+```bash
+#!/bin/bash
+
+export PATH="/opt/conda/bin:/usr/bin:$PATH"
+
+"$@"
+```
+
+```bash
+chmod +x /singularity
 ```
