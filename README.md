@@ -47,3 +47,17 @@ mkdir -p /usr/local/var/singularity/mnt
 sudo singularity create -s 1500 rnae-ubuntu.img
 docker export rnae-ubuntu-label | sudo singularity import rnae-ubuntu.img
 ```
+
+Finally, create and edit the /singularity executable (and make sure to make it executable):
+
+```bash
+#!/bin/bash
+
+export PATH="/opt/conda/bin:/usr/bin:$PATH"
+
+"$@"
+```
+
+```bash
+chmod +x /singularity
+```
