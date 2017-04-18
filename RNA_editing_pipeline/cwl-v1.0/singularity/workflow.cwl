@@ -17,7 +17,7 @@ inputs:
     default: 10
   edge_mutation:
     type: int
-    default: 0
+    defaul
   non_ag:
     type: int
     default: 1
