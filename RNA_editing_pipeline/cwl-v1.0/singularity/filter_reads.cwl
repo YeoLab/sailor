@@ -1,40 +1,48 @@
 #!/usr/bin/env cwl-runner
+
 cwlVersion: v1.0
+
 class: CommandLineTool
+
 baseCommand: [singularity, run, /projects/ps-yeolab/singularity/rnae-ubuntu.img, filter_reads.py]
+
 inputs:
-  output_bam:
-    type: string
-    default: intermediateFile.filtered.bam
+
+  input_unfiltered_bam:
+    type: File
     inputBinding:
-      position: 2
-      prefix: -o
+      position: 1
+      prefix: --input
   junction_overhang:
     type: int
     default: 10
     inputBinding:
-      position: 3
-      prefix: -j
+      position: 2
+      prefix: --junction_overhang
   edge_mutation:
     type: int
-    default: 0
+    default: 5
     inputBinding:
-      position: 4
-      prefix: -e
-  input_bam:
-    type: File
-    inputBinding:
-      position: 1
-      prefix: -i
+      position: 3
+      prefix: --edge_mutation
   non_ag:
     type: int
     default: 1
     inputBinding:
-      position: 5
-      prefix: -ag
-outputs:
-  output:
-    type: File
-    outputBinding:
-      glob: '*.filtered.bam'
+      position: 4
+      prefix: --non_ag_threshold
 
+arguments: [
+  "--output",
+  $(inputs.input_unfiltered_bam.nameroot).readfiltered.bam
+  ]
+
+outputs:
+
+  output_bam:
+    type: File
+    format: http://edamontology.org/format_2572
+    outputBinding:
+      glob: $(inputs.input_unfiltered_bam.nameroot).readfiltered.bam
+    label: ""
+    doc: "filtered bam"

@@ -1,27 +1,36 @@
 #!/usr/bin/env cwl-runner
+
 cwlVersion: v1.0
+
 class: CommandLineTool
-baseCommand: [singularity, run, /projects/ps-yeolab/singularity/rnae-ubuntu.img, samtools,
-  rmdup]
+
+baseCommand: [singularity, run, /projects/ps-yeolab/singularity/rnae-ubuntu.img, samtools, rmdup]
+
 inputs:
+
   duped_bam:
     type: File
     inputBinding:
       position: 1
+    label: "duped bam"
+    doc: "duped bam"
+
   single_end:
     type: boolean
     default: true
     inputBinding:
       prefix: -s
       position: 2
+
   rm_bam:
     type: string
-    default: intermediateFile.rmdup.bam
+    default: rmduped.bam
     inputBinding:
       position: 3
+      valueFrom: $(inputs.duped_bam.nameroot).rmdup.bam
+
 outputs:
-  output:
+  output_bam:
     type: File
     outputBinding:
-      glob: '*.rmdup.bam'
-
+      glob: $(inputs.duped_bam.nameroot).rmdup.bam

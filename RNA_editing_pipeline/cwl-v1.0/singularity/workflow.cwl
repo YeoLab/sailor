@@ -1,11 +1,18 @@
 #!/usr/bin/env cwl-runner
 
 cwlVersion: v1.0
+
 class: Workflow
 
 inputs:
 
   unsorted_bam:
+    type: File
+
+  reference:
+    type: File
+
+  known_snp:
     type: File
 
   single_end:
@@ -15,181 +22,119 @@ inputs:
   junction_overhang:
     type: int
     default: 10
+
   edge_mutation:
     type: int
-    defaul
+    default: 5
+
   non_ag:
     type: int
     default: 1
 
-  max_depth:
-    type: int
-    default: 1000
-  calculate_baq:
-    type: boolean
-    default: true
-  reference:
-    type: File
-  calculate_per_sample:
-    type: boolean
-    default: true
-  tags:
-    type: string
-    default: DP,DV,DPR,INFO/DPR,DP4,SP
-  bcf_format:
-    type: boolean
-    default: true
-
-  variant_format:
-    type: string
-    default: v
-  use_consensus_caller:
-    type: boolean
-    default: true
-  call_alts:
-    type: boolean
-    default: true
-
-  filtered_vcf:
-    type: string
-    default: intermediateFile.filtered.vcf
   min_variant_coverage:
     type: int
-    default: 10
+    default: 5
 
-  noSNP_eff:
-    type: string
-    default: intermediateFile.noSNP
-  known_snp:
-    type: File
+  alpha:
+    type: int
+    default: 0
+
+  beta:
+    type: int
+    default: 0
 
   edit_fraction:
     type: float
     default: 0.01
-  alpha:
-    type: int
-    default: 1
-  beta:
-    type: int
-    default: 1
 
 outputs:
-
-  sort_output:
+  sorted_bam_output:
     type: File
-    outputSource: sort/output
+    outputSource: sort/output_bam
 
-  rmdup_output:
+  rmdup_bam_output:
     type: File
-    outputSource: rmdup/output
+    outputSource: rmdup/output_bam
 
-  filter_reads_output:
+  filtered_bam_output:
     type: File
-    outputSource: filter_reads/output
+    outputSource: filter_reads/output_bam
 
   mpileup_output:
     type: File
-    outputSource: mpileup/output
+    outputSource: mpileup/output_gbcf
 
   call_variants_output:
     type: File
-    outputSource: call_variants/output
+    outputSource: call_variants/output_vcf
 
   filter_variants_output:
     type: File
-    outputSource: filter_variants/output
+    outputSource: filter_variants/output_vcf
 
-  filter_known_output:
+  filter_known_snp_output:
     type: File
-    outputSource: filter_known/output
+    outputSource: filter_known_snp/output_vcf
 
   rank_edits_output:
     type: File
-    outputSource: rank_edits/output
+    outputSource: rank_edits/output_conf
 
 steps:
 
   sort:
     run: sort.cwl
-    inputs:
-    - id: input_bam
-      source: unsorted_bam
+    in:
+      input_unsorted_bam: unsorted_bam
+    out: [output_bam]
 
   rmdup:
     run: rmdup.cwl
-    inputs:
-    - id: single_end
-      source: single_end
-    - id: duped_bam
-      source: sort/output
+    in:
+      single_end: single_end
+      duped_bam: sort/output_bam
+    out: [output_bam]
 
   filter_reads:
     run: filter_reads.cwl
-    inputs:
-    - id: input_bam
-      source: rmdup/output
-    - id: junction_overhang
-      source: junction_overhang
-    - id: edge_mutation
-      source: edge_mutation
-    - id: non_ag
-      source: non_ag
+    in:
+      input_unfiltered_bam: rmdup/output_bam
+      junction_overhang: junction_overhang
+      edge_mutation: edge_mutation
+      non_ag: non_ag
+    out: [output_bam]
 
   mpileup:
     run: mpileup.cwl
-    inputs:
-    - id: max_depth
-      source: max_depth
-    - id: calculate_baq
-      source: calculate_baq
-    - id: reference
-      source: reference
-    - id: calculate_per_sample
-      source: calculate_per_sample
-    - id: tags
-      source: tags
-    - id: bcf_format
-      source: bcf_format
-    - id: input_bam
-      source: filter_reads/output
+    in:
+      input_bam: filter_reads/output_bam
+      reference: reference
+    out: [output_gbcf]
 
   call_variants:
     run: call_variants.cwl
-    inputs:
-    - id: variant_format
-      source: variant_format
-    - id: use_consensus_caller
-      source: use_consensus_caller
-    - id: call_alts
-      source: call_alts
-    - id: input_gbcf
-      source: mpileup/output
+    in:
+      input_gbcf: mpileup/output_gbcf
+    out: [output_vcf]
+
   filter_variants:
     run: filter_variants.cwl
-    inputs:
-    - id: input_vcf
-      source: call_variants/output
-    - id: output_vcf
-      source: filtered_vcf
-    - id: min_variant_coverage
-      source: min_variant_coverage
+    in:
+      input_vcf: call_variants/output_vcf
+    out: [output_vcf]
 
   filter_known_snp:
     run: filter_known_snp.cwl
-    inputs:
-    - id: input_eff
-      source: filter_variants/output
-    - id: known_snp
-      source: known_snp
+    in:
+      input_eff: filter_variants/output_vcf
+      known_snp: known_snp
+    out: [output_vcf]
 
   rank_edits:
     run: rank_edits.cwl
-    inputs:
-    - id: input_noSNP
-      source: filter_known_snp/output
-    - id: edit_fraction
-      source: edit_fraction
-    - id: alpha
-      source: alpha
-    - id: beta
-      source: beta
+    in:
+      input_noSNP: filter_known_snp/output_vcf
+      edit_fraction: edit_fraction
+      alpha: alpha
+      beta: beta
+    out: [output_conf]

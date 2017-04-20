@@ -1,22 +1,33 @@
 #!/usr/bin/env cwl-runner
+
 cwlVersion: v1.0
+
 class: CommandLineTool
-baseCommand: [singularity, run, /projects/ps-yeolab/singularity/rnae-ubuntu.img, samtools,
-  sort]
+
+baseCommand: [singularity, run, /projects/ps-yeolab/singularity/rnae-ubuntu.img, samtools, sort]
+
 inputs:
-  output_bam:
-    type: string
-    default: intermediateFile.sorted.bam
-    inputBinding:
-      position: 2
-      prefix: -o
-  input_bam:
+
+  input_unsorted_bam:
     type: File
+    format: http://edamontology.org/format_2572
     inputBinding:
       position: 1
-outputs:
-  output:
-    type: File
-    outputBinding:
-      glob: $(inputs.output_bam)
+    label: "input bam"
+    doc: "input bam"
 
+arguments: [
+  "-o",
+  $(inputs.input_unsorted_bam.nameroot).sorted.bam
+  ]
+
+outputs:
+
+  output_bam:
+    type: File
+    format: http://edamontology.org/format_2572
+    outputBinding:
+      glob: $(inputs.input_unsorted_bam.nameroot).sorted.bam
+    label: ""
+    doc: "sorted bam"
+    

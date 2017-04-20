@@ -33,7 +33,7 @@ inputs:
 
   min_variant_coverage:
     type: int
-    default: 10
+    default: 5
 
   alpha:
     type: int

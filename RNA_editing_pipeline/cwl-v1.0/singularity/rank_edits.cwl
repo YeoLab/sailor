@@ -1,7 +1,11 @@
 #!/usr/bin/env cwl-runner
+
 cwlVersion: v1.0
+
 class: CommandLineTool
+
 baseCommand: [singularity, run, /projects/ps-yeolab/singularity/rnae-ubuntu.img, rank_edits.py]
+
 inputs:
   input_noSNP:
     type: File
@@ -12,29 +16,28 @@ inputs:
     type: float
     default: 0.01
     inputBinding:
-      position: 3
+      position: 2
       prefix: -c
   alpha:
     type: int
     default: 0
     inputBinding:
-      position: 4
+      position: 3
       prefix: -a
   beta:
     type: int
     default: 0
     inputBinding:
-      position: 5
+      position: 4
       prefix: -b
-  output_conf:
-    type: string
-    default: FINALOUTPUT.conf
-    inputBinding:
-      position: 2
-      prefix: -o
+
+arguments: [
+  "--output",
+  $(inputs.input_noSNP.nameroot).conf
+  ]
+
 outputs:
-  output:
+  output_conf:
     type: File
     outputBinding:
-      glob: '*.conf'
-
+      glob: $(inputs.input_noSNP.nameroot).conf
