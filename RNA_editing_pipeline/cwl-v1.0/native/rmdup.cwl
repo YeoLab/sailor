@@ -24,13 +24,13 @@ inputs:
 
   rm_bam:
     type: string
-    default: $(inputs.duped_bam.nameroot).rmdup.bam
+    default: rmduped.bam
     inputBinding:
       position: 3
+      valueFrom: $(inputs.duped_bam.nameroot).rmdup.bam
 
 outputs:
-  output:
+  output_bam:
     type: File
     outputBinding:
-      glob: $(inputs.input_sort_bam.nameroot).rmdup.bam
-
+      glob: $(inputs.duped_bam.nameroot).rmdup.bam

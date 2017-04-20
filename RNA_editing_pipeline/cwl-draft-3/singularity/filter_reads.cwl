@@ -22,7 +22,7 @@ inputs:
       prefix: -j
   - id: edge_mutation
     type: int
-    default: 0
+    default: 5
     inputBinding:
       position: 4
       prefix: -e

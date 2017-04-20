@@ -22,7 +22,7 @@ inputs:
     default: 10
   - id: edge_mutation
     type: int
-    default: 0
+    default: 5
   - id: non_ag
     type: int
     default: 1

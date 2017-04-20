@@ -47,16 +47,15 @@ inputs:
     inputBinding:
       position: 7
       prefix: -I
-  output_gbcf:
-    type: string
-    default: intermediateFile.gbcf
-    inputBinding:
-      position: 8
-      prefix: -o
+
+arguments: [
+  "-o",
+  $(inputs.input_bam.nameroot).gbcf
+  ]
 
 outputs:
-  output:
+  output_gbcf:
     type: File
     outputBinding:
-      glob: $(inputs.input_bam.nameroot).gbcf'
+      glob: $(inputs.input_bam.nameroot).gbcf
 

@@ -8,7 +8,7 @@ baseCommand: [samtools, sort]
 
 inputs:
 
-  input_sort_bam:
+  input_unsorted_bam:
     type: File
     format: http://edamontology.org/format_2572
     inputBinding:
@@ -18,16 +18,16 @@ inputs:
 
 arguments: [
   "-o",
-  $(inputs.input_sort_bam.nameroot).sorted.bam
+  $(inputs.input_unsorted_bam.nameroot).sorted.bam
   ]
 
 outputs:
 
-  output_sort_bam:
+  output_bam:
     type: File
     format: http://edamontology.org/format_2572
     outputBinding:
-      glob: $(inputs.input_sort_bam.nameroot).sorted.bam
+      glob: $(inputs.input_unsorted_bam.nameroot).sorted.bam
     label: ""
     doc: "sorted bam"
     

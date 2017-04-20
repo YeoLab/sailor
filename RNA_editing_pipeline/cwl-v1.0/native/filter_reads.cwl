@@ -7,38 +7,42 @@ class: CommandLineTool
 baseCommand: [filter_reads.py]
 
 inputs:
-  input_bam:
+
+  input_unfiltered_bam:
     type: File
     inputBinding:
       position: 1
       prefix: --input
-  output_bam:
-    type: string
-    default: intermediateFile.filtered.bam
-    inputBinding:
-      position: 2
-      prefix: --output
   junction_overhang:
     type: int
     default: 10
     inputBinding:
-      position: 3
+      position: 2
       prefix: --junction_overhang
   edge_mutation:
     type: int
-    default: 0
+    default: 5
     inputBinding:
-      position: 4
+      position: 3
       prefix: --edge_mutation
   non_ag:
     type: int
     default: 1
     inputBinding:
-      position: 5
+      position: 4
       prefix: --non_ag_threshold
 
+arguments: [
+  "--output",
+  $(inputs.input_unfiltered_bam.nameroot).readfiltered.bam
+  ]
+
 outputs:
-  output:
+
+  output_bam:
     type: File
+    format: http://edamontology.org/format_2572
     outputBinding:
-      glob $(inputs.input_bam.nameroot).filtered.bam
+      glob: $(inputs.input_unfiltered_bam.nameroot).readfiltered.bam
+    label: ""
+    doc: "filtered bam"

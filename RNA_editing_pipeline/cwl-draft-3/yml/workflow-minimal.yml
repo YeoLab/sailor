@@ -1,9 +1,0 @@
-known_snp: # known SNP in BED3 format
-  class: File
-  path: /home/bay001/projects/pipeline_20160728/v6/c_elegans.PRJNA13758.WS254.annotations.SNPandPointMutations.bed3
-reference: # reference genome
-  class: File
-  path: /home/bay001/projects/pipeline_20160728/v6/ce11.fa
-unsorted_bam: # aligned BAM file
-  class: File
-  path: /home/bay001/projects/pipeline_20160728/v6/WT_6.bam
