@@ -1,8 +1,12 @@
-#!/usr/bin/env cwltoil
+#!/usr/bin/env cwltool
 
 cwlVersion: v1.0
 
 class: Workflow
+
+
+requirements:
+  - class: SubworkflowFeatureRequirement
 
 
 inputs:
@@ -148,7 +152,7 @@ steps:
       [sorted_bam_output, rmdup_bam_output, filtered_bam_output, mpileup_output, call_variants_output, filter_variants_output, filter_known_snp_output, rank_edits_output]
        
   rev:
-    run: rnaeditin1strand.cwl
+    run: rnaediting1strand.cwl
     in: 
       input_bam: split_strands/rev_output_bam
       known_snp: known_snp

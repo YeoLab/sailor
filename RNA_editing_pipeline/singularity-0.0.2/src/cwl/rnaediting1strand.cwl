@@ -56,9 +56,6 @@ inputs:
 
 outputs:
 
-  split_bam_output:
-    type: File
-    outputSource: split/output_bam
 
   sorted_bam_output:
     type: File
