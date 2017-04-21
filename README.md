@@ -9,3 +9,11 @@ cd job_files
 
 sh run_workflow_v1.sh
 ```
+
+
+```
+docker-machine create -d virtualbox singularity
+docker-machine env singularity
+eval $(docker-machine env singularity)
+
+```

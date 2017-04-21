@@ -6,7 +6,10 @@ class: Workflow
 
 inputs:
 
-  unsorted_bam:
+  flags:
+    type: int[]
+
+  input_bam:
     type: File
 
   reference:
@@ -35,6 +38,10 @@ inputs:
     type: int
     default: 5
 
+  dp:
+    type: string
+    default: DP4
+
   alpha:
     type: int
     default: 0
@@ -48,6 +55,10 @@ inputs:
     default: 0.01
 
 outputs:
+  split_bam_output:
+    type: File
+    outputSource: split/output_bam
+
   sorted_bam_output:
     type: File
     outputSource: sort/output_bam
@@ -82,10 +93,17 @@ outputs:
 
 steps:
 
+  split:
+    run: split_strands.cwl
+    in:
+      input_bam: input_bam
+      flags: flags
+    out: [output_bam]
+
   sort:
     run: sort.cwl
     in:
-      input_unsorted_bam: unsorted_bam
+      input_unsorted_bam: split/output_bam
     out: [output_bam]
 
   rmdup:
@@ -121,6 +139,8 @@ steps:
     run: filter_variants.cwl
     in:
       input_vcf: call_variants/output_vcf
+      min_variant_coverage: min_variant_coverage
+      dp: dp
     out: [output_vcf]
 
   filter_known_snp:

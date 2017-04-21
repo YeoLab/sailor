@@ -2,7 +2,7 @@
 single_end: true
 
 # aligned BAM file
-unsorted_bam:
+input_bam:
   class: File
   path: ../example_data/example.bam
 
@@ -15,4 +15,7 @@ reference:
 known_snp:
   class: File
   path: ../example_data/knownSNPs.bed
+
+# forward or reverse flag
+flags: [16]
 

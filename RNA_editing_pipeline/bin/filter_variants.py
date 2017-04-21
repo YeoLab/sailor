@@ -44,7 +44,7 @@ class CLIError(Exception):
     def __unicode__(self):
         return self.msg
 
-def vcf2eff(input_vcf, output_eff, min_coverage):
+def vcf2eff(input_vcf, output_eff, min_coverage, cov_metric = 'DP4'):
     """
     Step 6: Filter variants for coverage and editing-specific AG/TC changes.
 
@@ -74,13 +74,17 @@ def vcf2eff(input_vcf, output_eff, min_coverage):
                 alt = line[4]
                 
                 dp, i = re.findall('DP\=(\d+)\;.*DP4\=([\d\,]+)', line[7])[0]
+                i = i.split(',')
                 """
                 if the DP flag does not meet minimum coverage, toss it.
+                if the DP4 flag does not meet minimum coverage, toss it.
                 """
-                i = i.split(',')
-                if int(dp) < min_coverage:
+
+                if (cov_metric == 'DP') and (int(dp) < min_coverage):
                     flag = 0
-                
+                elif (cov_metric == 'DP4') and ((int(i[0]) + int(i[2]) + int(i[1]) + int(i[3])) < min_coverage):
+                    flag = 0
+
                 """
                 i[0] = forward ref allele
                 i[1] = reverse ref allele
@@ -192,14 +196,24 @@ USAGE
             type=int,
             default = 10
         )
+        parser.add_argument(
+            "-d", "--dp",
+            dest="dp",
+            help="Use either the DP flag or [DP4] flag when calculating "
+                 "coverage (see vcf format for more info)",
+            required=False,
+            default='DP4'
+        )
+
         # Process arguments
         args = parser.parse_args()
         input_vcf = args.input_vcf
         output_eff = args.output_eff
-        
+        dp = args.dp
+
         min_coverage = args.min_coverage
         
-        vcf2eff(input_vcf, output_eff, min_coverage)
+        vcf2eff(input_vcf, output_eff, min_coverage, dp)
         return 0
     except KeyboardInterrupt:
         ### handle keyboard interrupt ###

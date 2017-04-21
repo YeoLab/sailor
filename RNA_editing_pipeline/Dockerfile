@@ -30,6 +30,7 @@ RUN wget http://repo.continuum.io/miniconda/Miniconda2-4.1.11-Linux-x86_64.sh  -
     /opt/conda/bin/conda update -q conda && \
     /opt/conda/bin/conda info -a
 
+
 ENV PATH /opt/conda/bin:$PATH
 
 # install
@@ -38,8 +39,10 @@ RUN conda install libgfortran
 RUN conda install -c bioconda htslib=1.3.1 samtools=1.3.1 bcftools=1.2 bedtools=2.25.0
 RUN conda install -c anaconda numpy=1.10 pandas=0.17 scipy=0.16
 RUN conda install -c bcbio pybedtools=0.6.9 pysam=0.8.4pre0
+RUN conda install -c conda-forge tqdm=4.11.2
 
-RUN pip install rnaediting
+# install CWL
+pip install cwlref-runner
 
 # addpaths
 ADD bin /usr/bin/

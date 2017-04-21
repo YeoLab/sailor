@@ -1,3 +1,3 @@
 #!/bin/bash
 
-cwl-runner ../RNA_editing_pipeline/cwl-v1.0/native/filter_variants.cwl filter_variants.yml
+cwl-runner ../RNA_editing_pipeline/cwl-v1.0/filter_variants.cwl filter_variants.yml

@@ -4,6 +4,7 @@ cwlVersion: v1.0
 
 class: CommandLineTool
 
+# baseCommand: [singularity, run, /projects/ps-yeolab/singularity/rnae-ubuntu.img, filter_known_snp.py]
 baseCommand: [filter_known_snp.py]
 
 inputs:

@@ -4,7 +4,8 @@ cwlVersion: v1.0
 
 class: CommandLineTool
 
-baseCommand: [singularity, run, /projects/ps-yeolab/singularity/rnae-ubuntu.img, bcftools, call]
+# baseCommand: [singularity, run, /projects/ps-yeolab/singularity/rnae-ubuntu.img, bcftools, call]
+baseCommand: [bcftools, call]
 
 inputs:
   input_gbcf:

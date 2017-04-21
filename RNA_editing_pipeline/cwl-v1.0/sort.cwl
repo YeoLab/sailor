@@ -4,6 +4,7 @@ cwlVersion: v1.0
 
 class: CommandLineTool
 
+# baseCommand: [singularity, run, /projects/ps-yeolab/singularity/rnae-ubuntu.img, samtools, sort]
 baseCommand: [samtools, sort]
 
 inputs:
