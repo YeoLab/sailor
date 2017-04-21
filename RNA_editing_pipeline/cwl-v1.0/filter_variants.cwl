@@ -19,7 +19,11 @@ inputs:
     inputBinding:
       position: 2
       prefix: -m
-
+  dp:
+    type: string
+    inputBinding:
+      position: 3
+      prefix: --dp
 arguments: [
   "-o",
   $(inputs.input_vcf.nameroot).varfiltered.vcf
