@@ -5,7 +5,7 @@ cwlVersion: v1.0
 class: CommandLineTool
 
 
-baseCommand: [split_bams.py]
+baseCommand: [split_strands.py]
 
 inputs:
 
@@ -14,21 +14,11 @@ inputs:
     inputBinding:
       position: 1
       prefix: --input
-      
-  #flags:
-  #  type: int[]
-  #  inputBinding:
-  #    position: 2
-  #    prefix: --flags
-  #  default: [1, 2]
 
 arguments: [
-  "--flags",
-  "1",
-  "2",
-  "--fwdoutput",
+  "--output-forward",
   $(inputs.input_bam.nameroot).fwd.bam,
-  "--revoutput",
+  "--output-reverse",
   $(inputs.input_bam.nameroot).rev.bam
   ]
 
@@ -40,7 +30,7 @@ outputs:
     outputBinding:
       glob: $(inputs.input_bam.nameroot).fwd.bam
     label: ""
-    doc: "bam file split on specified flags"
+    doc: "bam file split on forward flags"
     
   rev_output_bam:
     type: File
@@ -48,4 +38,4 @@ outputs:
     outputBinding:
       glob: $(inputs.input_bam.nameroot).rev.bam
     label: ""
-    doc: "bam file split on specified flags"
+    doc: "bam file split on reverse flags"

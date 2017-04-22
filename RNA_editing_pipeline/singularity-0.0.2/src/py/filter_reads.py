@@ -1,20 +1,21 @@
 #!/usr/bin/env python
 # encoding: utf-8
 '''
-editing.filter_reads -- shortdesc
+editing.filter_reads -- BAM filtering script
 
-editing.filter_reads is a description
+filters reads to clean BAM files of sequencing errors at the end of reads and
+unexpected non-AG mutations. Also conservatively removes reads with small
+junction overhangs and trims any softclipping that may have occurred within
+the read.
 
-It defines classes_and_methods
+@author:     brian
 
-@author:     user_name
-
-@copyright:  2016 organization_name. All rights reserved.
+@copyright:  2016 yeolab. All rights reserved.
 
 @license:    license
 
-@contact:    user_email
-@deffield    updated: Updated
+@contact:    bay001@ucsd.edu
+@deffield    updated: 4-21-2017
 '''
 
 import sys
@@ -28,11 +29,12 @@ from argparse import RawDescriptionHelpFormatter
 __all__ = []
 __version__ = 0.1
 __date__ = '2016-07-13'
-__updated__ = '2016-07-13'
+__updated__ = '2017-04-21'
 
 DEBUG = 0
 TESTRUN = 0
 PROFILE = 0
+
 
 class CLIError(Exception):
     '''Generic exception to raise and log different fatal errors.'''
@@ -44,13 +46,9 @@ class CLIError(Exception):
     def __unicode__(self):
         return self.msg
 
-def filter_reads(
-        input_bam,
-        output_bam,
-        min_overhang,
-        min_underhang,
-        non_ag_mm_threshold
-):
+
+def filter_reads(input_bam, output_bam, min_overhang, min_underhang,
+                 non_ag_mm_threshold):
     """
     # Step 3: filter reads
 
@@ -85,15 +83,12 @@ def filter_reads(
             Throw out unmapped reads
             """
             if read.is_unmapped:
-                flag = 2  #
+                flag = 2
                 continue
-                # print(read)
-            non_ag_mm_counts = 0
             try:
                 mm = read.get_tag('MD')
             except KeyError:
                 mm = ''
-                # print(read.query_name)
             cigar = read.cigarstring
             read_seq = read.query_sequence
             
@@ -117,20 +112,15 @@ def filter_reads(
             """
             cigar_overhang_regex = ur"^(\d+)M.*[\D](\d+)M$"
             
-            #print("cigar: {}".format(line[5]))
             overhangs = re.findall(cigar_overhang_regex,cigar)
                     
-            if(overhangs):
-                # print("cigar: {}, overhangs: {}".format(cigar,overhangs))
+            if overhangs:
                 overhangs = overhangs[0]
-                #print(overhangs)
-                if(len(overhangs) == 1):
-                    if(int(overhangs[0]) < min_overhang):
-                        # print(read)
+                if len(overhangs) == 1:
+                    if int(overhangs[0]) < min_overhang:
                         flag = 3
-                elif(len(overhangs) == 2):
+                elif len(overhangs) == 2:
                     if (int(overhangs[1]) < min_overhang) or (int(overhangs[0]) < min_overhang):
-                        # print(read)
                         flag = 4
                     
             """
@@ -157,11 +147,9 @@ def filter_reads(
                 flank_mm = flank_mm[0]
                 if flank_mm[1]:
                     if int(flank_mm[1]) < min_underhang:
-                        # print("{} does not meet min underhang.".format(flank_mm[1]))
                         flag = 7
                 if flank_mm[0]:
                     if int(flank_mm[0]) < min_underhang:
-                        # print("{} does not meet min underhang.".format(flank_mm[0]))
                         flag = 8
             
             """
@@ -173,10 +161,10 @@ def filter_reads(
             
             """
             # 5c) Search MDZ for A, T's in reference, if mutations are not 
-            #     A-G (sense) or T-C (antisense), add to non_ag_mm_counts threshold.
-            #     If non_ag_mm_counts > threshold, toss the whole read. Otherwise,
-            #     allow up to the maximum allowable non-AG mismatches before tossing.
-            #     Default: 1 mm
+            #     A-G (sense) or T-C (antisense), add to non_ag_mm_counts
+            #     threshold. If non_ag_mm_counts > threshold, toss the whole
+            #     read. Otherwise, allow up to the maximum allowable non-AG
+            #     mismatches before tossing. Default: 1 mm
             """
             mismatches_regex = ur"(\d+)([ATCG])"
             mismatches = re.findall(mismatches_regex,mm)
@@ -204,7 +192,8 @@ def filter_reads(
             print(read)
     i.close()
     o.close()
-    
+
+
 def main(argv=None): # IGNORE:C0111
     '''Command line options.'''
 
@@ -300,7 +289,6 @@ USAGE
         )
         return 0
     except KeyboardInterrupt:
-        ### handle keyboard interrupt ###
         return 0
     except Exception, e:
         if DEBUG or TESTRUN:

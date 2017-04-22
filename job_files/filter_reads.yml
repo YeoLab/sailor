@@ -1,5 +1,0 @@
-#!/usr/bin/env filter_reads.cwl
-
-input_unfiltered_bam:
-  class: File
-  path: ../example_data/example.sorted.rmdup.bam

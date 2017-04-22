@@ -1,5 +1,0 @@
-#!/usr/bin/env sort.cwl
-
-input_sort_bam:
-  class: File
-  path: ../example_data/example.bam

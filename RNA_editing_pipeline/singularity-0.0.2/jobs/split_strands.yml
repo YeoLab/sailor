@@ -1,0 +1,5 @@
+#!/usr/bin/env split_strands.cwl
+
+input_bam:
+  class: File
+  path: ../../../example_data/unsplit_example.bam

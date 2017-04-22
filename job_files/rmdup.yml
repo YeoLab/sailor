@@ -1,5 +1,0 @@
-#!/usr/bin/env rmdup.cwl
-
-duped_bam:
-  class: File
-  path: ../example_data/example.sorted.bam

@@ -137,8 +137,9 @@ steps:
   fwd:
     run: rnaediting1strand.cwl
     in: 
-      input_bam: split_strands/fwd_output_bam
+      input_unsorted_bam: split_strands/fwd_output_bam
       known_snp: known_snp
+      reference: reference
       single_end: single_end
       junction_overhang: junction_overhang
       edge_mutation: edge_mutation
@@ -154,8 +155,9 @@ steps:
   rev:
     run: rnaediting1strand.cwl
     in: 
-      input_bam: split_strands/rev_output_bam
+      input_unsorted_bam: split_strands/rev_output_bam
       known_snp: known_snp
+      reference: reference
       single_end: single_end
       junction_overhang: junction_overhang
       edge_mutation: edge_mutation

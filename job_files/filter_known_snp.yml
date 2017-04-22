@@ -1,9 +1,0 @@
-#!/usr/bin/env filter_known_snp.cwl
-
-input_eff:
-  class: File
-  path: ../example_data/example.sorted.rmdup.readfiltered.varfiltered.vcf
-
-known_snp:
-  class: File
-  path: ../example_data/knownSNPs.bed
