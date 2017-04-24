@@ -1,0 +1,17 @@
+# is read single-ended (for rmdup)
+single_end: true
+
+# aligned BAM file
+input_bam:
+  class: File
+  path: ../../../example_data/example.single_end.unsplit.bam
+
+# reference file
+reference:
+  class: File
+  path: ../../../example_data/ce11.chrI.fa
+
+# known snps file
+known_snp:
+  class: File
+  path: ../../../example_data/knownSNPs.bed
