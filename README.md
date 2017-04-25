@@ -8,18 +8,16 @@ RNA Editing
 
 That's it!
 
-### (Optional)
+### (Optional) Download Small Example Files
 [Example BAM](https://github.com/YeoLab/rna_editing_pipeline/blob/master/example_data/example.bam)
 [Example Reference](https://github.com/YeoLab/rna_editing_pipeline/blob/master/example_data/ce11.chrI.fa)
 [Example Known SNPs](https://github.com/YeoLab/rna_editing_pipeline/blob/master/example_data/knownSNPs.bed)
 
+[Example YAML](https://github.com/YeoLab/rna_editing_pipeline/blob/master/example_data/example-minimal.yml)
+[Example YAML with optional arguments](https://github.com/YeoLab/rna_editing_pipeline/blob/master/example_data/example.yml)
 # Running the Pipeline:
-
 ```
-rnaediting \
---input_bam input.bam \
---reference reference.fa \
---known_snp snps.bed3
+rnaediting example-minimal.yml
 ```
 
 # Optional Arguments:

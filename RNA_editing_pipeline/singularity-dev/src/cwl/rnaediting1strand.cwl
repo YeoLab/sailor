@@ -53,6 +53,9 @@ inputs:
     type: float
     default: 0.01
 
+  variants_only:
+    type: boolean
+    default: true
 
 outputs:
 
@@ -73,9 +76,13 @@ outputs:
     type: File
     outputSource: mpileup/output_gbcf
 
-  call_variants_output:
+  call_snvs_output:
     type: File
-    outputSource: call_variants/output_vcf
+    outputSource: call_snvs/output_vcf
+
+  format_variants_output:
+    type: File
+    outputSource: format_variants/output_vcf
 
   filter_variants_output:
     type: File
@@ -122,16 +129,23 @@ steps:
       reference: reference
     out: [output_gbcf]
 
-  call_variants:
-    run: call_variants.cwl
+  call_snvs:
+    run: call_snvs.cwl
     in:
       input_gbcf: mpileup/output_gbcf
+    out: [output_vcf]
+
+  format_variants:
+    run: format_variants.cwl
+    in:
+      input_gbcf: call_snvs/output_vcf
+      variants_only: variants_only
     out: [output_vcf]
 
   filter_variants:
     run: filter_variants.cwl
     in:
-      input_vcf: call_variants/output_vcf
+      input_vcf: format_variants/output_vcf
       min_variant_coverage: min_variant_coverage
       dp: dp
     out: [output_vcf]

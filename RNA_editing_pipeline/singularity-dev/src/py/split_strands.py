@@ -124,8 +124,8 @@ USAGE
         else:
             output_rev_bam = os.path.splitext(input_bam)[0] + '.rev.bam'
 
-        # forward_flags = [83, 163, 16]
-        # reverse_flags = [0, 99, 147]
+        forward_flags = [16, 83, 163]
+        reverse_flags = [0, 99, 147]
 
         input_handle = pysam.AlignmentFile(input_bam)
 
@@ -137,11 +137,9 @@ USAGE
         )
 
         for read in input_handle:
-            # if read.flag in forward_flags:
-            if read.is_reverse:
+            if read.flag in forward_flags:
                 rev_handle.write(read)
-            # elif read.flag in reverse_flags:
-            else:
+            elif read.flag in reverse_flags:
                 fwd_handle.write(read)
 
         input_handle.close()

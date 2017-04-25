@@ -63,7 +63,7 @@ def pass_min_coverage(dp, i, min_coverage, cov_metric):
     :return passed: boolean
         True if the coverage is at least min_coverage, false otherwise.
     """
-
+    i = i.split(',')
     if (cov_metric == 'DP') and (int(dp) < min_coverage):
         return False
     elif (cov_metric == 'DP4') and ((int(i[0]) + int(i[2]) + int(
@@ -109,7 +109,64 @@ def get_dp_and_i(info):
     return dp, i
 
 
-def vcf2eff(input_vcf, output_eff, min_coverage, cov_metric='DP4'):
+def split_i_and_get_allele(i, reverse_stranded):
+    """
+    Splits i and returns the ref and alt alleles. Returns the strand that
+    is supported by the most reads. If there's a tie, defaults to
+    negative (if reversely stranded library) or positive (if not reversely
+    stranded).
+
+    i[0] = forward ref allele
+    i[1] = reverse ref allele
+    i[2] = forward non-ref allele
+    i[3] = reverse non-ref allele
+
+    logic: if there are more ref/non-ref alleles on the
+    forward strand, the SNV must come from the positive reads.
+    Vice versa, if there are more ref/non-ref alleles on
+    the reverse, SNV must be reverse as well. Strand info is not
+    kept in VCF files, so this must be inferred.
+
+    :param i: string
+        dp4 string
+    :param reverse_stranded: boolean
+        is reversely stranded (truseq stranded)
+    :return ref_num: int
+        number of reads supporting reference allele
+    :return alt_num: int
+        number of reads supporting alt allele
+    :return sense: boolean
+        True if the majority of alleles support the same strand as the
+        library prep protocol (if reverse_stranded==True, and rev allele
+        num > fwd allele num, then sense is True).
+
+    """
+    i = i.split(',')
+    fwd_alleles = int(i[0]) + int(i[2])
+    rev_alleles = int(i[1]) + int(i[3])
+    if reverse_stranded:
+        if fwd_alleles <= rev_alleles:
+            sense = True
+            ref_num = int(i[1])
+            alt_num = int(i[3])
+        else:
+            sense = False
+            ref_num = int(i[0])
+            alt_num = int(i[2])
+    else:
+        if fwd_alleles >= rev_alleles:
+            sense = True
+            ref_num = int(i[0])
+            alt_num = int(i[2])
+        else:
+            sense = False
+            ref_num = int(i[1])
+            alt_num = int(i[3])
+    return ref_num, alt_num, sense
+
+
+def vcf2eff(input_vcf, output_eff, min_coverage, cov_metric='DP4',
+            reverse_stranded=True):
     """
     Step 6: Filter variants for coverage and editing-specific AG/TC changes.
 
@@ -148,7 +205,7 @@ def vcf2eff(input_vcf, output_eff, min_coverage, cov_metric='DP4'):
 
                     dp, i = get_dp_and_i(line[7])
 
-                    i = i.split(',')
+
                     """
                     if the DP flag does not meet minimum coverage, toss it.
                     if the DP4 flag does not meet minimum coverage, toss it.
@@ -156,27 +213,13 @@ def vcf2eff(input_vcf, output_eff, min_coverage, cov_metric='DP4'):
                     if not pass_min_coverage(dp, i, min_coverage, cov_metric):
                         flag = 2
                         flags['min_coverage'].append('{}:{}'.format(chrom, pos))
-                    """
-                    i[0] = forward ref allele
-                    i[1] = reverse ref allele
-                    i[2] = forward non-ref allele
-                    i[3] = reverse non-ref allele
 
-                    logic: if there are more ref/non-ref alleles on the
-                    forward strand, the SNV must come from the positive reads.
-                    Vice versa, if there are more ref/non-ref alleles on
-                    the reverse, SNV must be reverse as well. Strand info is not
-                    kept in VCF files, so this must be inferred.
                     """
-
-                    if (int(i[0]) + int(i[2])) < (int(i[1]) + int(i[3])):
-                        sense = True
-                        ref_num = int(i[1])
-                        alt_num = int(i[3])
-                    else:
-                        sense = False
-                        ref_num = int(i[0])
-                        alt_num = int(i[2])
+                    Get sense/antisense edits
+                    """
+                    ref_num, alt_num, sense = split_i_and_get_allele(
+                        i, reverse_stranded
+                    )
 
                     """
                     Get edit percentage

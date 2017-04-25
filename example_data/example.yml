@@ -1,0 +1,38 @@
+# is read single-ended (for rmdup)
+single_end: true
+
+# aligned BAM file
+input_bam:
+  class: File
+  path: example.bam
+
+# reference file
+reference:
+  class: File
+  path: ce11.chrI.fa
+
+# known snps file
+known_snp:
+  class: File
+  path: knownSNPs.bed
+
+### Optional Arguments ###
+
+# if the dataset is single end (opposed to paired end)
+single_end: true
+
+# minimum overlap between exon/exon junction
+junction_overhang: 10
+
+# remove reads which contain mutations [5]nt away from the read ends, where sequencing errors are more likely to occur
+edge_mutation: 5
+
+# remove reads with more than [1] unexpected mutation (one that isn't A-G or T-C antisense).
+non_ag: 1
+
+#
+min_variant_coverage: 5
+dp: DP4
+alpha: 0
+beta: 0
+edit_fraction: 0.01

@@ -126,27 +126,7 @@ def rank_edits(alfa, beta, cov_margin, conf_min, eff_file, outfile):
         confidence = 1 - betainc(G, A, cov_margin)
 
         # retrieve genic region found by snpEff
-        region = "NoRegion"
-        if len(infos) > 2:
-            eff = infos[-1]
-            if eff[:3] == "EFF":
-                regions = set([region.split("(")[0] \
-                               for region in eff[4:].split(",") \
-                               if region.split("(")[0] != 'UPSTREAM' \
-                               and region.split("(")[0] != 'DOWNSTREAM'])
-                # report only most interesting region for each site:
-                priorities = ["SPLICE_SITE_ACCEPTOR",
-                              "SPLICE_SITE_DONOR",
-                              "NON_SYNONYMOUS_CODING",
-                              "SYNONYMOUS_CODING",
-                              "UTR_3_PRIME",
-                              "EXON",
-                              "INTRON",
-                              "UTR_5_PRIME"]
-                for x in priorities:
-                    if x in regions:
-                        region = x
-                        break
+        region = "-"
 
         # print line in CONF format
 

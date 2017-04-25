@@ -212,7 +212,7 @@ def filter_reads(
             """
             if read.is_unmapped:
                 flags['unmapped'].append(read.name)
-                flag = 2
+                continue  # must be here, otherwise reads won't have CIGAR
             try:
                 mm = read.get_tag('MD')
             except KeyError:
@@ -224,7 +224,9 @@ def filter_reads(
             to not interfere with mis-alignments downstream)
             """
             left_softclip, right_softclip = get_softclip(cigar)
-            read_seq = remove_softclipped_reads(left_softclip, right_softclip, read_seq)
+            read_seq = remove_softclipped_reads(
+                left_softclip, right_softclip, read_seq
+            )
 
             """
             # 5b) Check for small junction overhangs.

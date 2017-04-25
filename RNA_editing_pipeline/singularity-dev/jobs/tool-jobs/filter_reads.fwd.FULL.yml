@@ -1,0 +1,5 @@
+#!/usr/bin/env split_strands.cwl
+
+input_unfiltered_bam:
+  class: File
+  path: WT.fwd.bam

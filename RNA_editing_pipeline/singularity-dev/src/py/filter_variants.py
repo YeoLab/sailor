@@ -19,6 +19,7 @@ import sys
 import os
 import re
 import pysam
+from collections import defaultdict
 
 from argparse import ArgumentParser
 from argparse import RawDescriptionHelpFormatter
@@ -47,7 +48,125 @@ class CLIError(Exception):
         return self.msg
 
 
-def vcf2eff(input_vcf, output_eff, min_coverage, cov_metric='DP4'):
+def pass_min_coverage(dp, i, min_coverage, cov_metric):
+    """
+    if the DP flag does not meet minimum coverage, toss it.
+    if the DP4 flag does not meet minimum coverage, toss it.
+    :param dp:
+        DP coverage allele depth
+    :param i: string
+        DP4 coverage allele depth
+    :param min_coverage: int
+        minimum coverage required (anything less will return False)
+    :param cov_metric: string
+        either 'DP' or 'DP4'
+    :return passed: boolean
+        True if the coverage is at least min_coverage, false otherwise.
+    """
+    alleles = i.split(',')
+    if (cov_metric == 'DP') and (int(dp) < min_coverage):
+        return False
+    elif (cov_metric == 'DP4') and ((int(alleles[0]) + int(alleles[2]) + int(
+            alleles[1]) + int(alleles[3])) < min_coverage):
+        return False
+
+    return True
+
+
+def pass_editing_site_phenotype(ref, alt, sense):
+    """
+    Returns True if it looks like an editing site (A-G or T-C antisense).
+
+    :param ref: string
+    :param alt: string
+    :param sense: boolean
+    :return passed: boolean
+        True if it looks like an editing site
+    """
+
+    # handle multiallelic callers if necessary (not perfect)
+    if ((ref == 'A' and alt.find('G') == -1) or
+        (ref == 'T' and alt.find('C') == -1)):
+        return False
+    # sense variants must have A as ref, antisense must have T
+    if (sense and ref != 'A') or (not sense and ref != 'T'):
+        return False
+    return True
+
+
+def get_dp_and_i(info):
+    """
+    Returns the dp and dp4 coverage attributes.
+    :param info: string
+        the info (attribute) string in a vcf file.
+    :return dp: string
+        coverage defined by DP
+    :return dp4: string
+        comma separated coverage defined by DP4
+    """
+    regex = 'DP\=(\d+)\;.*DP4\=([\d\,]+)'
+    dp, i = re.findall(regex, info)[0]
+    return dp, i
+
+
+def split_i_and_get_allele(i, reverse_stranded):
+    """
+    Splits i and returns the ref and alt alleles. Returns the strand that
+    is supported by the most reads. If there's a tie, defaults to
+    negative (if reversely stranded library) or positive (if not reversely
+    stranded).
+
+    i[0] = forward ref allele
+    i[1] = reverse ref allele
+    i[2] = forward non-ref allele
+    i[3] = reverse non-ref allele
+
+    logic: if there are more ref/non-ref alleles on the
+    forward strand, the SNV must come from the positive reads.
+    Vice versa, if there are more ref/non-ref alleles on
+    the reverse, SNV must be reverse as well. Strand info is not
+    kept in VCF files, so this must be inferred.
+
+    :param alleles: string
+        dp4 string
+    :param reverse_stranded: boolean
+        is reversely stranded (truseq stranded)
+    :return ref_num: int
+        number of reads supporting reference allele
+    :return alt_num: int
+        number of reads supporting alt allele
+    :return sense: boolean
+        True if the majority of alleles support the same strand as the
+        library prep protocol (if reverse_stranded==True, and rev allele
+        num > fwd allele num, then sense is True).
+
+    """
+    alleles = i.split(',')
+    fwd_alleles = int(alleles[0]) + int(alleles[2])
+    rev_alleles = int(alleles[1]) + int(alleles[3])
+    if reverse_stranded:
+        if fwd_alleles <= rev_alleles:
+            sense = True
+            ref_num = int(alleles[1])
+            alt_num = int(alleles[3])
+        else:
+            sense = False
+            ref_num = int(alleles[0])
+            alt_num = int(alleles[2])
+    else:
+        if fwd_alleles >= rev_alleles:
+            sense = True
+            ref_num = int(alleles[0])
+            alt_num = int(alleles[2])
+        else:
+            sense = False
+            ref_num = int(alleles[1])
+            alt_num = int(alleles[3])
+    return ref_num, alt_num, sense
+
+
+def vcf2eff(input_vcf, output_eff, min_coverage, cov_metric='DP4',
+            reverse_stranded=True):
     """
     Step 6: Filter variants for coverage and editing-specific AG/TC changes.
 
@@ -73,74 +192,49 @@ def vcf2eff(input_vcf, output_eff, min_coverage, cov_metric='DP4'):
         # for line in f:
         for line in f:
             flag = 1  # flag = 1 -> variant good to keep, otherwise toss
-
+            flags = defaultdict(list)
             if line.startswith('#'):  # is vcf header
                 o.write(line)
             else:
                 try:
                     line = line.split('\t')
+                    chrom = line[0]
+                    pos = line[1]
                     ref = line[3]
                     alt = line[4]
 
-                    dp, i = re.findall('DP\=(\d+)\;.*DP4\=([\d\,]+)', line[7])[0]
-                    i = i.split(',')
+                    dp, i = get_dp_and_i(line[7])
+
+
                     """
                     if the DP flag does not meet minimum coverage, toss it.
                     if the DP4 flag does not meet minimum coverage, toss it.
                     """
-
-                    if (cov_metric == 'DP') and (int(dp) < min_coverage):
-                        flag = 0
-                    elif (cov_metric == 'DP4') and ((int(i[0]) + int(i[2]) + int(
-                            i[1]) + int(i[3])) < min_coverage):
-                        flag = 0
+                    if not pass_min_coverage(dp, i, min_coverage, cov_metric):
+                        flag = 2
+                        flags['min_coverage'].append('{}:{}'.format(chrom, pos))
 
                     """
-                    i[0] = forward ref allele
-                    i[1] = reverse ref allele
-                    i[2] = forward non-ref allele
-                    i[3] = reverse non-ref allele
-
-                    logic: if there are more ref/non-ref alleles on the
-                    reverse strand, is it 'reversed' due to TruSeq stranded
-                    preparation.
-
+                    Get sense/antisense edits
                     """
-
-                    if (int(i[0]) + int(i[2])) < (int(i[1]) + int(i[3])):
-                        sense = True
-                        ref_num = int(i[1])
-                        alt_num = int(i[3])
-                    else:
-                        sense = False
-                        ref_num = int(i[0])
-                        alt_num = int(i[2])
+                    ref_num, alt_num, sense = split_i_and_get_allele(
+                        i, reverse_stranded
+                    )
 
                     """
                     Get edit percentage
                     """
                     if (alt_num + ref_num) > 0:
                         line[5] = str(alt_num / float(alt_num + ref_num))
-                        line[2] = str(alt_num + ref_num)
-
-                        eff = re.findall('EFF=([^\(]+)', line[7])
-                        if len(eff) > 0:
-                            line[6] = eff  # post filtering step after snpEff
+                    line[2] = str(alt_num + ref_num)
 
                     """
                     # 6) if not A-G or T-C, then pass
 
                     """
-                    if ((ref == 'A' and alt.find('G') == -1) or (
-                            ref == 'T' and alt.find('C') == -1)):
-                        flag = 0
-
-                    """
-                    # 6) if reference isn't A (forward) or T (reverse), toss it
-                    """
-                    if (sense and ref != 'A') or (not sense and ref != 'T'):
-                        flag = 0
-
+                    if not pass_editing_site_phenotype(ref, alt, sense):
+                        flag = 3
+                        flags['not_editing'].append('{}:{}'.format(chrom, pos))
                     """
                     if vcf line survives all filters, write it.
                     """
@@ -150,7 +244,7 @@ def vcf2eff(input_vcf, output_eff, min_coverage, cov_metric='DP4'):
                 except IndexError:
                     print(line)
     o.close()
-    return 0
+    return flags
 
 
 def main(argv=None):  # IGNORE:C0111
@@ -225,16 +319,29 @@ USAGE
             required=False,
             default='DP4'
         )
-
+        parser.add_argument(
+            "-s", "--save-filtered",
+            dest="save_filtered",
+            help="save filtered readsnames",
+            required=False,
+            action='store_true'
+        )
         # Process arguments
         args = parser.parse_args()
         input_vcf = args.input_vcf
         output_eff = args.output_eff
+        save_filtered = args.save_filtered
         dp = args.dp
 
         min_coverage = args.min_coverage
 
-        vcf2eff(input_vcf, output_eff, min_coverage, dp)
+        flags = vcf2eff(input_vcf, output_eff, min_coverage, dp)
+        if save_filtered:
+            print('saving filtered vars to file...')
+            for flag, lst in flags.iteritems():
+                o = open(output_eff + '.{}'.format(flag), 'w')
+                o.write('\n'.join(lst))
+                o.close()
         return 0
     except KeyboardInterrupt:
         return 0
