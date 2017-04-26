@@ -1,0 +1,46 @@
+##fileformat=VCFv4.2
+##FILTER=<ID=PASS,Description="All filters passed">
+##samtoolsVersion=1.3.1+htslib-1.3.1
+##samtoolsCommand=samtools mpileup -o example.rev.sorted.rmdup.readfiltered.gbcf -d 1000 -E -f /tmp/tmpOmkgHN/stg2aa33171-be25-421b-b3ed-2f9c651b7dab/ce11.chrI.fa -p -t DP,DV,DPR,INFO/DPR,DP4,SP -g -I /tmp/tmpOmkgHN/stgf79b9cfd-a233-4a42-90a7-978143ceddaa/example.rev.sorted.rmdup.readfiltered.bam
+##reference=file:///tmp/tmpOmkgHN/stg2aa33171-be25-421b-b3ed-2f9c651b7dab/ce11.chrI.fa
+##contig=<ID=chrI,length=15072434>
+##contig=<ID=chrII,length=15279421>
+##contig=<ID=chrIII,length=13783801>
+##contig=<ID=chrIV,length=17493829>
+##contig=<ID=chrV,length=20924180>
+##contig=<ID=chrX,length=17718942>
+##contig=<ID=chrM,length=13794>
+##ALT=<ID=*,Description="Represents allele(s) other than observed.">
+##INFO=<ID=INDEL,Number=0,Type=Flag,Description="Indicates that the variant is an INDEL.">
+##INFO=<ID=IDV,Number=1,Type=Integer,Description="Maximum number of reads supporting an indel">
+##INFO=<ID=IMF,Number=1,Type=Float,Description="Maximum fraction of reads supporting an indel">
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Raw read depth">
+##INFO=<ID=VDB,Number=1,Type=Float,Description="Variant Distance Bias for filtering splice-site artefacts in RNA-seq data (bigger is better)",Version="3">
+##INFO=<ID=RPB,Number=1,Type=Float,Description="Mann-Whitney U test of Read Position Bias (bigger is better)">
+##INFO=<ID=MQB,Number=1,Type=Float,Description="Mann-Whitney U test of Mapping Quality Bias (bigger is better)">
+##INFO=<ID=BQB,Number=1,Type=Float,Description="Mann-Whitney U test of Base Quality Bias (bigger is better)">
+##INFO=<ID=MQSB,Number=1,Type=Float,Description="Mann-Whitney U test of Mapping Quality vs Strand Bias (bigger is better)">
+##INFO=<ID=SGB,Number=1,Type=Float,Description="Segregation based metric.">
+##INFO=<ID=MQ0F,Number=1,Type=Float,Description="Fraction of MQ0 reads (smaller is better)">
+##FORMAT=<ID=PL,Number=G,Type=Integer,Description="List of Phred-scaled genotype likelihoods">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Number of high-quality bases">
+##FORMAT=<ID=DV,Number=1,Type=Integer,Description="Number of high-quality non-reference bases">
+##FORMAT=<ID=DPR,Number=R,Type=Integer,Description="Number of high-quality bases observed for each allele">
+##INFO=<ID=DPR,Number=R,Type=Integer,Description="Number of high-quality bases observed for each allele">
+##FORMAT=<ID=DP4,Number=4,Type=Integer,Description="Number of high-quality ref-fwd, ref-reverse, alt-fwd and alt-reverse bases">
+##FORMAT=<ID=SP,Number=1,Type=Integer,Description="Phred-scaled strand bias P-value">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##INFO=<ID=AF1,Number=1,Type=Float,Description="Max-likelihood estimate of the first ALT allele frequency (assuming HWE)">
+##INFO=<ID=AF2,Number=1,Type=Float,Description="Max-likelihood estimate of the first and second group ALT allele frequency (assuming HWE)">
+##INFO=<ID=AC1,Number=1,Type=Float,Description="Max-likelihood estimate of the first ALT allele count (no HWE assumption)">
+##INFO=<ID=MQ,Number=1,Type=Integer,Description="Root-mean-square mapping quality of covering reads">
+##INFO=<ID=FQ,Number=1,Type=Float,Description="Phred probability of all samples being the same">
+##INFO=<ID=PV4,Number=4,Type=Float,Description="P-values for strand bias, baseQ bias, mapQ bias and tail distance bias">
+##INFO=<ID=G3,Number=3,Type=Float,Description="ML estimate of genotype frequencies">
+##INFO=<ID=HWE,Number=1,Type=Float,Description="Chi^2 based HWE test P-value based on G3">
+##INFO=<ID=DP4,Number=4,Type=Integer,Description="Number of high-quality ref-forward , ref-reverse, alt-forward and alt-reverse bases">
+##bcftools_callVersion=1.2+htslib-1.2.1
+##bcftools_callCommand=call -o example.rev.sorted.rmdup.readfiltered.vcf -c -O v -A /tmp/tmphLzV5P/stg9b459177-dd98-467e-8c4b-627eb5b224e1/example.rev.sorted.rmdup.readfiltered.gbcf
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	baz
+chrI	15023	86	A	G	0.0116279069767	.	DP=86;DPR=85,1;SGB=-0.379885;RPB=1;MQB=1;BQB=1;MQ0F=0;AF1=0;AC1=0;DP4=0,85,0,1;MQ=20;FQ=-271.528;PV4=1,1,1,0.00396601	GT:PL:DP:DV:SP:DP4:DPR	0/0:0,237,90:86:1:0:0,85,0,1:85,1	
+chrI	15057	65	A	G	0.0153846153846	.	DP=65;DPR=64,1;SGB=-0.379885;RPB=1;MQB=1;BQB=1;MQ0F=0;AF1=0;AC1=0;DP4=0,64,0,1;MQ=20;FQ=-208.527;PV4=1,1,1,1	GT:PL:DP:DV:SP:DP4:DPR	0/0:0,174,84:65:1:0:0,64,0,1:64,1	

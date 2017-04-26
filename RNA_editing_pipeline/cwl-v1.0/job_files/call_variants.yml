@@ -1,6 +1,0 @@
-#!/usr/bin/env call_variants.cwl
-
-input_gbcf:
-  class: File
-  path: ../example_data/example.sorted.rmdup.readfiltered.gbcf
-

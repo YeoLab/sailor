@@ -1,5 +1,0 @@
-#!/usr/bin/env rank_edits.cwl
-
-input_noSNP:
-  class: File
-  path: ../example_data/example.sorted.rmdup.readfiltered.varfiltered.snpfiltered.vcf

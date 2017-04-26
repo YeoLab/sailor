@@ -1,0 +1,9 @@
+known_snp: # known SNP in BED3 format
+  class: File
+  path: ../example_data/knownSNPs.bed
+reference: # reference genome
+  class: File
+  path: ../example_data/ce11.chrI.fa
+unsorted_bam: # aligned BAM file
+  class: File
+  path: ../example_data/example.bam
