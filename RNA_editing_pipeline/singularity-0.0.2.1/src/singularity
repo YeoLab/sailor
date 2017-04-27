@@ -1,0 +1,15 @@
+#!/bin/bash
+
+export PATH="/opt/singularity/bin:/opt/rnaediting/cwl:/opt/rnaediting/py:/opt/conda/bin:/usr/bin:$PATH"
+
+
+if [ $# -eq 0 ]
+then
+    echo
+    cat /documentation/usage_cwl.txt
+    cp /documentation/*.yaml ./
+    cp -r /opt/rnaediting/example ./
+else
+    #echo rnaediting $1
+    /opt/rnaediting/bin/rnaediting $1
+fi
