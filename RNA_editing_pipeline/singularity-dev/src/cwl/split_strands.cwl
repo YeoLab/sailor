@@ -14,6 +14,11 @@ inputs:
     inputBinding:
       position: 1
       prefix: --input
+  reverse_stranded_library:
+    type: boolean
+    inputBinding:
+      position: 2
+      prefix: --reverse-strand
 
 arguments: [
   "--output-forward",

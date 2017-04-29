@@ -21,6 +21,10 @@ inputs:
     type: boolean
     default: true
 
+  reverse_stranded_library:
+    type: boolean
+    default: true
+
   junction_overhang:
     type: int
     default: 10
@@ -120,6 +124,7 @@ steps:
       junction_overhang: junction_overhang
       edge_mutation: edge_mutation
       non_ag: non_ag
+      reverse_stranded_library: reverse_stranded_library
     out: [output_bam]
 
   mpileup:
@@ -139,7 +144,6 @@ steps:
     run: format_variants.cwl
     in:
       input_gbcf: call_snvs/output_vcf
-      variants_only: variants_only
     out: [output_vcf]
 
   filter_variants:
@@ -148,6 +152,7 @@ steps:
       input_vcf: format_variants/output_vcf
       min_variant_coverage: min_variant_coverage
       dp: dp
+      reverse_stranded_library: reverse_stranded_library
     out: [output_vcf]
 
   filter_known_snp:

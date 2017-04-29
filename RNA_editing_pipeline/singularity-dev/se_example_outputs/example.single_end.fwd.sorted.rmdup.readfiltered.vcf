@@ -1,0 +1,77 @@
+##fileformat=VCFv4.2
+##FILTER=<ID=PASS,Description="All filters passed">
+##samtoolsVersion=1.3.1+htslib-1.3.1
+##samtoolsCommand=samtools mpileup -o example.single_end.fwd.sorted.rmdup.readfiltered.gbcf -d 1000 -E -f /tmp/tmpjPdmSv/stg3b83e09e-21a6-4fcb-a0e3-d1bd8b73cdf1/ce11.chrI.fa -p -t DP,DV,DPR,INFO/DPR,DP4,SP -g -I /tmp/tmpjPdmSv/stg07e6ca01-8764-471d-aaa4-b1f095488eff/example.single_end.fwd.sorted.rmdup.readfiltered.bam
+##reference=file:///tmp/tmpjPdmSv/stg3b83e09e-21a6-4fcb-a0e3-d1bd8b73cdf1/ce11.chrI.fa
+##contig=<ID=chrI,length=15072434>
+##contig=<ID=chrII,length=15279421>
+##contig=<ID=chrIII,length=13783801>
+##contig=<ID=chrIV,length=17493829>
+##contig=<ID=chrV,length=20924180>
+##contig=<ID=chrX,length=17718942>
+##contig=<ID=chrM,length=13794>
+##ALT=<ID=*,Description="Represents allele(s) other than observed.">
+##INFO=<ID=INDEL,Number=0,Type=Flag,Description="Indicates that the variant is an INDEL.">
+##INFO=<ID=IDV,Number=1,Type=Integer,Description="Maximum number of reads supporting an indel">
+##INFO=<ID=IMF,Number=1,Type=Float,Description="Maximum fraction of reads supporting an indel">
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Raw read depth">
+##INFO=<ID=VDB,Number=1,Type=Float,Description="Variant Distance Bias for filtering splice-site artefacts in RNA-seq data (bigger is better)",Version="3">
+##INFO=<ID=RPB,Number=1,Type=Float,Description="Mann-Whitney U test of Read Position Bias (bigger is better)">
+##INFO=<ID=MQB,Number=1,Type=Float,Description="Mann-Whitney U test of Mapping Quality Bias (bigger is better)">
+##INFO=<ID=BQB,Number=1,Type=Float,Description="Mann-Whitney U test of Base Quality Bias (bigger is better)">
+##INFO=<ID=MQSB,Number=1,Type=Float,Description="Mann-Whitney U test of Mapping Quality vs Strand Bias (bigger is better)">
+##INFO=<ID=SGB,Number=1,Type=Float,Description="Segregation based metric.">
+##INFO=<ID=MQ0F,Number=1,Type=Float,Description="Fraction of MQ0 reads (smaller is better)">
+##FORMAT=<ID=PL,Number=G,Type=Integer,Description="List of Phred-scaled genotype likelihoods">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Number of high-quality bases">
+##FORMAT=<ID=DV,Number=1,Type=Integer,Description="Number of high-quality non-reference bases">
+##FORMAT=<ID=DPR,Number=R,Type=Integer,Description="Number of high-quality bases observed for each allele">
+##INFO=<ID=DPR,Number=R,Type=Integer,Description="Number of high-quality bases observed for each allele">
+##FORMAT=<ID=DP4,Number=4,Type=Integer,Description="Number of high-quality ref-fwd, ref-reverse, alt-fwd and alt-reverse bases">
+##FORMAT=<ID=SP,Number=1,Type=Integer,Description="Phred-scaled strand bias P-value">
+##bcftools_viewVersion=1.2+htslib-1.2.1
+##bcftools_viewCommand=view -o example.single_end.fwd.sorted.rmdup.readfiltered.vcf -v snps -O v /tmp/tmpl3ZIDv/stga3737895-ad91-4bc0-8df3-e0b7009ad521/example.single_end.fwd.sorted.rmdup.readfiltered.gbcf
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##INFO=<ID=AF1,Number=1,Type=Float,Description="Max-likelihood estimate of the first ALT allele frequency (assuming HWE)">
+##INFO=<ID=AF2,Number=1,Type=Float,Description="Max-likelihood estimate of the first and second group ALT allele frequency (assuming HWE)">
+##INFO=<ID=AC1,Number=1,Type=Float,Description="Max-likelihood estimate of the first ALT allele count (no HWE assumption)">
+##INFO=<ID=MQ,Number=1,Type=Integer,Description="Root-mean-square mapping quality of covering reads">
+##INFO=<ID=FQ,Number=1,Type=Float,Description="Phred probability of all samples being the same">
+##INFO=<ID=PV4,Number=4,Type=Float,Description="P-values for strand bias, baseQ bias, mapQ bias and tail distance bias">
+##INFO=<ID=G3,Number=3,Type=Float,Description="ML estimate of genotype frequencies">
+##INFO=<ID=HWE,Number=1,Type=Float,Description="Chi^2 based HWE test P-value based on G3">
+##INFO=<ID=DP4,Number=4,Type=Integer,Description="Number of high-quality ref-forward , ref-reverse, alt-forward and alt-reverse bases">
+##bcftools_callVersion=1.2+htslib-1.2.1
+##bcftools_callCommand=call -o example.single_end.fwd.sorted.rmdup.readfiltered.vcf -c -O v -A /tmp/tmp1xLiyT/stga57d9e7c-d86f-40aa-8ac6-61770f933e18/example.single_end.fwd.sorted.rmdup.readfiltered.vcf
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	baz
+chrI	9229	.	A	G	4.6171	.	DP=2;DPR=0,2;VDB=0.06;SGB=-0.453602;MQ0F=0;AF1=1;AC1=2;DP4=0,0,0,2;MQ=20;FQ=-40.5265	GT:PL:DP:DV:SP:DP4:DPR	0/0:36,6,0:2:2:0:0,0,0,2:0,2
+chrI	9461	.	A	G	17.6055	.	DP=1;DPR=0,1;SGB=-0.379885;MQ0F=0;AF1=1;AC1=2;DP4=0,0,0,1;MQ=20;FQ=-37.569	GT:PL:DP:DV:SP:DP4:DPR	0/0:20,3,0:1:1:0:0,0,0,1:0,1
+chrI	9510	.	C	T	17.6055	.	DP=1;DPR=0,1;SGB=-0.379885;MQ0F=0;AF1=1;AC1=2;DP4=0,0,0,1;MQ=20;FQ=-37.569	GT:PL:DP:DV:SP:DP4:DPR	0/0:20,3,0:1:1:0:0,0,0,1:0,1
+chrI	11643	.	G	T	143.547	.	DP=118;DPR=117,1;SGB=-0.379885;RPB=1;MQB=1;BQB=1;MQ0F=0;AF1=0;AC1=0;DP4=0,117,0,1;MQ=20;FQ=-289.528;PV4=1,1,1,0.217432	GT:PL:DP:DV:SP:DP4:DPR	0/0:0,255,103:118:1:0:0,117,0,1:117,1
+chrI	11689	.	G	A	142.547	.	DP=117;DPR=116,1;SGB=-0.379885;RPB=1;MQB=1;BQB=1;MQ0F=0;AF1=0;AC1=0;DP4=0,116,0,1;MQ=20;FQ=-289.528;PV4=1,1,1,1	GT:PL:DP:DV:SP:DP4:DPR	0/0:0,255,102:117:1:0:0,116,0,1:116,1
+chrI	11925	.	A	G	17.6055	.	DP=1;DPR=0,1;SGB=-0.379885;MQ0F=0;AF1=1;AC1=2;DP4=0,0,0,1;MQ=20;FQ=-37.569	GT:PL:DP:DV:SP:DP4:DPR	0/0:20,3,0:1:1:0:0,0,0,1:0,1
+chrI	11935	.	A	G	17.6055	.	DP=1;DPR=0,1;SGB=-0.379885;MQ0F=0;AF1=1;AC1=2;DP4=0,0,0,1;MQ=20;FQ=-37.569	GT:PL:DP:DV:SP:DP4:DPR	0/0:20,3,0:1:1:0:0,0,0,1:0,1
+chrI	11955	.	A	G	17.6055	.	DP=1;DPR=0,1;SGB=-0.379885;MQ0F=0;AF1=1;AC1=2;DP4=0,0,0,1;MQ=20;FQ=-37.569	GT:PL:DP:DV:SP:DP4:DPR	0/0:20,3,0:1:1:0:0,0,0,1:0,1
+chrI	11963	.	A	G	17.6055	.	DP=1;DPR=0,1;SGB=-0.379885;MQ0F=0;AF1=1;AC1=2;DP4=0,0,0,1;MQ=20;FQ=-37.569	GT:PL:DP:DV:SP:DP4:DPR	0/0:20,3,0:1:1:0:0,0,0,1:0,1
+chrI	12259	.	A	G	33.5316	.	DP=1;DPR=0,1;SGB=-0.379885;MQ0F=0;AF1=1;AC1=2;DP4=0,0,0,1;MQ=3;FQ=-38.981	GT:PL:DP:DV:SP:DP4:DPR	0/0:4,3,0:1:1:0:0,0,0,1:0,1
+chrI	12260	.	A	G	33.5316	.	DP=1;DPR=0,1;SGB=-0.379885;MQ0F=0;AF1=1;AC1=2;DP4=0,0,0,1;MQ=3;FQ=-38.981	GT:PL:DP:DV:SP:DP4:DPR	0/0:4,3,0:1:1:0:0,0,0,1:0,1
+chrI	12261	.	A	G	33.5316	.	DP=1;DPR=0,1;SGB=-0.379885;MQ0F=0;AF1=1;AC1=2;DP4=0,0,0,1;MQ=3;FQ=-38.981	GT:PL:DP:DV:SP:DP4:DPR	0/0:4,3,0:1:1:0:0,0,0,1:0,1
+chrI	12274	.	A	G	33.5316	.	DP=1;DPR=0,1;SGB=-0.379885;MQ0F=0;AF1=1;AC1=2;DP4=0,0,0,1;MQ=3;FQ=-38.981	GT:PL:DP:DV:SP:DP4:DPR	0/0:4,3,0:1:1:0:0,0,0,1:0,1
+chrI	12278	.	A	G	33.5316	.	DP=1;DPR=0,1;SGB=-0.379885;MQ0F=0;AF1=1;AC1=2;DP4=0,0,0,1;MQ=3;FQ=-38.981	GT:PL:DP:DV:SP:DP4:DPR	0/0:4,3,0:1:1:0:0,0,0,1:0,1
+chrI	12316	.	A	G	33.5316	.	DP=1;DPR=0,1;SGB=-0.379885;MQ0F=0;AF1=1;AC1=2;DP4=0,0,0,1;MQ=3;FQ=-38.981	GT:PL:DP:DV:SP:DP4:DPR	0/0:4,3,0:1:1:0:0,0,0,1:0,1
+chrI	12956	.	T	A	41.5353	.	DP=8;DPR=7,1;SGB=-0.379885;RPB=1;MQB=1;BQB=1;MQ0F=0;AF1=0;AC1=0;DP4=0,7,0,1;MQ=20;FQ=-38.5256;PV4=1,1,1,1	GT:PL:DP:DV:SP:DP4:DPR	0/0:0,4,64:8:1:0:0,7,0,1:7,1
+chrI	13616	.	A	G	17.6055	.	DP=1;DPR=0,1;SGB=-0.379885;MQ0F=0;AF1=1;AC1=2;DP4=0,0,0,1;MQ=20;FQ=-37.569	GT:PL:DP:DV:SP:DP4:DPR	0/0:20,3,0:1:1:0:0,0,0,1:0,1
+chrI	13617	.	A	G	17.6055	.	DP=1;DPR=0,1;SGB=-0.379885;MQ0F=0;AF1=1;AC1=2;DP4=0,0,0,1;MQ=20;FQ=-37.569	GT:PL:DP:DV:SP:DP4:DPR	0/0:20,3,0:1:1:0:0,0,0,1:0,1
+chrI	13626	.	A	G	17.6055	.	DP=1;DPR=0,1;SGB=-0.379885;MQ0F=0;AF1=1;AC1=2;DP4=0,0,0,1;MQ=20;FQ=-37.569	GT:PL:DP:DV:SP:DP4:DPR	0/0:20,3,0:1:1:0:0,0,0,1:0,1
+chrI	13650	.	A	G	4.6171	.	DP=2;DPR=0,2;VDB=0.72;SGB=-0.453602;MQ0F=0;AF1=1;AC1=2;DP4=0,0,0,2;MQ=20;FQ=-40.5265	GT:PL:DP:DV:SP:DP4:DPR	0/0:36,6,0:2:2:0:0,0,0,2:0,2
+chrI	14622	.	G	A	35.5361	.	DP=6;DPR=5,1;SGB=-0.379885;RPB=1;MQB=1;BQB=1;MQ0F=0;AF1=0.269562;AC1=1;DP4=0,5,0,1;MQ=20;FQ=-32.5274;PV4=1,1,1,0	GT:PL:DP:DV:SP:DP4:DPR	0/0:2,0,53:6:1:0:0,5,0,1:5,1
+chrI	14780	.	T	G	32.5264	.	DP=3;DPR=2,1;SGB=-0.379885;RPB=1;MQB=1;BQB=1;MQ0F=0;AF1=0.40731;AC1=1;DP4=0,2,0,1;MQ=20;FQ=-29.5979;PV4=1,0.333333,1,1	GT:PL:DP:DV:SP:DP4:DPR	0/0:5,0,23:3:1:0:0,2,0,1:2,1
+chrI	14952	.	G	T	140.547	.	DP=112;DPR=111,1;SGB=-0.379885;RPB=1;MQB=1;BQB=1;MQ0F=0;AF1=0;AC1=0;DP4=0,111,0,1;MQ=20;FQ=-289.528;PV4=1,1,1,1	GT:PL:DP:DV:SP:DP4:DPR	0/0:0,255,100:112:1:0:0,111,0,1:111,1
+chrI	14953	.	G	T	140.547	.	DP=112;DPR=111,1;SGB=-0.379885;RPB=1;MQB=1;BQB=1;MQ0F=0;AF1=0;AC1=0;DP4=0,111,0,1;MQ=20;FQ=-289.528;PV4=1,1,1,1	GT:PL:DP:DV:SP:DP4:DPR	0/0:0,255,100:112:1:0:0,111,0,1:111,1
+chrI	14971	.	G	C	140.547	.	DP=110;DPR=109,1;SGB=-0.379885;RPB=1;MQB=1;BQB=1;MQ0F=0;AF1=0;AC1=0;DP4=0,109,0,1;MQ=20;FQ=-289.528;PV4=1,1,1,1	GT:PL:DP:DV:SP:DP4:DPR	0/0:0,255,100:110:1:0:0,109,0,1:109,1
+chrI	14977	.	G	A	140.547	.	DP=112;DPR=111,1;SGB=-0.379885;RPB=1;MQB=1;BQB=1;MQ0F=0;AF1=0;AC1=0;DP4=0,111,0,1;MQ=20;FQ=-289.528;PV4=1,1,1,0.0252215	GT:PL:DP:DV:SP:DP4:DPR	0/0:0,255,100:112:1:0:0,111,0,1:111,1
+chrI	14995	.	C	A	138.546	.	DP=105;DPR=104,1;SGB=-0.379885;RPB=1;MQB=1;BQB=1;MQ0F=0;AF1=0;AC1=0;DP4=0,104,0,1;MQ=20;FQ=-289.528;PV4=1,1,1,1	GT:PL:DP:DV:SP:DP4:DPR	0/0:0,255,98:105:1:0:0,104,0,1:104,1
+chrI	15001	.	G	C	136.546	.	DP=102;DPR=101,1;SGB=-0.379885;RPB=1;MQB=1;BQB=1;MQ0F=0;AF1=0;AC1=0;DP4=0,101,0,1;MQ=20;FQ=-289.528;PV4=1,0.00983204,1,0.391643	GT:PL:DP:DV:SP:DP4:DPR	0/0:0,255,96:102:1:0:0,101,0,1:101,1
+chrI	15023	.	A	G	130.546	.	DP=84;DPR=83,1;SGB=-0.379885;RPB=1;MQB=1;BQB=1;MQ0F=0;AF1=0;AC1=0;DP4=0,83,0,1;MQ=20;FQ=-265.528;PV4=1,1,1,0.00441446	GT:PL:DP:DV:SP:DP4:DPR	0/0:0,231,90:84:1:0:0,83,0,1:83,1
+chrI	15057	.	A	G	123.546	.	DP=63;DPR=62,1;SGB=-0.379885;RPB=1;MQB=1;BQB=1;MQ0F=0;AF1=0;AC1=0;DP4=0,62,0,1;MQ=20;FQ=-202.527;PV4=1,1,1,1	GT:PL:DP:DV:SP:DP4:DPR	0/0:0,168,83:63:1:0:0,62,0,1:62,1
+chrI	15100	.	A	C	114.205	.	DP=31;DPR=30,1;SGB=-0.379885;RPB=1;MQB=1;BQB=1;MQ0F=0;AF1=0;AC1=0;DP4=0,30,0,1;MQ=20;FQ=-111.526;PV4=1,1.99644e-19,1,0.417977	GT:PL:DP:DV:SP:DP4:DPR	0/0:0,77,85:31:1:0:0,30,0,1:30,1

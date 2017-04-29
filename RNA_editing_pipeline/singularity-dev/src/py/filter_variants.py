@@ -63,11 +63,11 @@ def pass_min_coverage(dp, i, min_coverage, cov_metric):
     :return passed: boolean
         True if the coverage is at least min_coverage, false otherwise.
     """
-    alleles = i.split(',')
+    i = i.split(',')
     if (cov_metric == 'DP') and (int(dp) < min_coverage):
         return False
-    elif (cov_metric == 'DP4') and ((int(alleles[0]) + int(alleles[2]) + int(
-            alleles[1]) + int(alleles[3])) < min_coverage):
+    elif (cov_metric == 'DP4') and ((int(i[0]) + int(i[2]) + int(
+            i[1]) + int(i[3])) < min_coverage):
         return False
 
     return True
@@ -127,7 +127,7 @@ def split_i_and_get_allele(i, reverse_stranded):
     the reverse, SNV must be reverse as well. Strand info is not
     kept in VCF files, so this must be inferred.
 
-    :param alleles: string
+    :param i: string
         dp4 string
     :param reverse_stranded: boolean
         is reversely stranded (truseq stranded)
@@ -141,27 +141,27 @@ def split_i_and_get_allele(i, reverse_stranded):
         num > fwd allele num, then sense is True).
 
     """
-    alleles = i.split(',')
-    fwd_alleles = int(alleles[0]) + int(alleles[2])
-    rev_alleles = int(alleles[1]) + int(alleles[3])
+    i = i.split(',')
+    fwd_alleles = int(i[0]) + int(i[2])
+    rev_alleles = int(i[1]) + int(i[3])
     if reverse_stranded:
         if fwd_alleles <= rev_alleles:
             sense = True
-            ref_num = int(alleles[1])
-            alt_num = int(alleles[3])
+            ref_num = int(i[1])
+            alt_num = int(i[3])
         else:
             sense = False
-            ref_num = int(alleles[0])
-            alt_num = int(alleles[2])
+            ref_num = int(i[0])
+            alt_num = int(i[2])
     else:
         if fwd_alleles >= rev_alleles:
             sense = True
-            ref_num = int(alleles[0])
-            alt_num = int(alleles[2])
+            ref_num = int(i[0])
+            alt_num = int(i[2])
         else:
             sense = False
-            ref_num = int(alleles[1])
-            alt_num = int(alleles[3])
+            ref_num = int(i[1])
+            alt_num = int(i[3])
     return ref_num, alt_num, sense
 
 
@@ -188,11 +188,12 @@ def vcf2eff(input_vcf, output_eff, min_coverage, cov_metric='DP4',
 
     print("Calling vcf2eff: {}".format(input_vcf))
     o = open(output_eff, 'w')
+    flags = defaultdict(list)
     with open(input_vcf) as f:
         # for line in f:
         for line in f:
             flag = 1  # flag = 1 -> variant good to keep, otherwise toss
-            flags = defaultdict(list)
+
             if line.startswith('#'):  # is vcf header
                 o.write(line)
             else:
@@ -326,16 +327,25 @@ USAGE
             required=False,
             action='store_true'
         )
+        parser.add_argument(
+            "--reverse-strand",
+            dest="reverse_strand",
+            help="reverse stranded library",
+            action='store_true',
+            required=False,
+            default=False
+        )
         # Process arguments
         args = parser.parse_args()
         input_vcf = args.input_vcf
         output_eff = args.output_eff
         save_filtered = args.save_filtered
         dp = args.dp
+        is_reverse = args.reverse_strand
 
         min_coverage = args.min_coverage
 
-        flags = vcf2eff(input_vcf, output_eff, min_coverage, dp)
+        flags = vcf2eff(input_vcf, output_eff, min_coverage, dp, is_reverse)
         if save_filtered:
             print('saving filtered vars to file...')
             for flag, lst in flags.iteritems():

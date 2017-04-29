@@ -113,3 +113,90 @@ def test_pass_editing_site_phenotype_4():
     sense = True
     assert fv.pass_editing_site_phenotype(ref, alt, sense) == False
 
+def test_pass_fail_variant_1():
+    """
+    Tests the DP4 flag filter
+    :return:
+    """
+    vcf_file = 'test/vcf/pass_fail_variant_1.vcf'
+    output_eff = 'test/vcf/pass_fail_variant_1.eff'
+    min_coverage = 5
+    cov_metric = 'DP4'
+    reverse_stranded = False
+
+    flags = fv.vcf2eff(vcf_file, output_eff, min_coverage, cov_metric, reverse_stranded)
+    assert flags['min_coverage'] == ['chrI:4295']
+
+def test_pass_fail_variant_2():
+    """
+    Tests the DP flag filter
+    :return:
+    """
+    vcf_file = 'test/vcf/pass_fail_variant_2.vcf'
+    output_eff = 'test/vcf/pass_fail_variant_2.eff'
+    min_coverage = 5
+    cov_metric = 'DP'
+    reverse_stranded = False
+
+    flags = fv.vcf2eff(vcf_file, output_eff, min_coverage, cov_metric, reverse_stranded)
+    assert flags['min_coverage'] == ['chrI:4295']
+
+def test_pass_fail_variant_3():
+    """
+    passes if we see an A/G variant on the forward strand,
+    when the library is forward stranded
+    :return:
+    """
+    vcf_file = 'test/vcf/pass_fail_variant_3.vcf'
+    output_eff = 'test/vcf/pass_fail_variant_3.eff'
+    min_coverage = 5
+    cov_metric = 'DP'
+    reverse_stranded = False
+
+    flags = fv.vcf2eff(vcf_file, output_eff, min_coverage, cov_metric, reverse_stranded)
+    assert flags['not_editing'] == ['chrI:4295']
+
+def test_pass_fail_variant_4():
+    """
+    passes if we see a T/C variant on the forward strand,
+    when the library is reverse stranded
+    :return:
+    """
+    vcf_file = 'test/vcf/pass_fail_variant_4.vcf'
+    output_eff = 'test/vcf/pass_fail_variant_4.eff'
+    min_coverage = 5
+    cov_metric = 'DP'
+    reverse_stranded = True
+
+    flags = fv.vcf2eff(vcf_file, output_eff, min_coverage, cov_metric, reverse_stranded)
+    assert flags['not_editing'] == ['chrI:3771']
+
+def test_pass_fail_variant_5():
+    """
+    passes if we see a T/C variant on the reverse strand,
+    when the library is forward stranded.
+    :return:
+    """
+    vcf_file = 'test/vcf/pass_fail_variant_5.vcf'
+    output_eff = 'test/vcf/pass_fail_variant_5.eff'
+    min_coverage = 5
+    cov_metric = 'DP'
+    reverse_stranded = False
+
+    flags = fv.vcf2eff(vcf_file, output_eff, min_coverage, cov_metric, reverse_stranded)
+    assert flags['not_editing'] == ['chrI:3771']
+
+def test_pass_fail_variant_6():
+    """
+    passes if we see an A/G variant on the reverse strand,
+    when the library is reverse stranded
+    :return:
+    """
+    vcf_file = 'test/vcf/pass_fail_variant_6.vcf'
+    output_eff = 'test/vcf/pass_fail_variant_6.eff'
+    min_coverage = 5
+    cov_metric = 'DP'
+    reverse_stranded = True
+
+    flags = fv.vcf2eff(vcf_file, output_eff, min_coverage, cov_metric, reverse_stranded)
+    assert flags['not_editing'] == ['chrI:4295']

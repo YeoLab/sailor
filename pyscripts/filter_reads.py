@@ -98,10 +98,33 @@ def remove_softclipped_reads(left, right, read_seq):
     return read_seq[left:-right]
 
 
-def get_junction_overhangs(cigar):
+def get_junction_overhangs(cigar, min_jct_overhang):
+    """
+    Returns the MIN number of reads left/right of ANY junction
+    as indicated by the N in a cigar string.
+    Return -1, -1 for reads that don't span junctions.
+
+    :param cigar: string
+    :param min_jct_overhang: int
+    :return:
+    """
+    if cigar.count('N') == 1:
+        return get_single_junction_overhang(cigar)
+
+    min_left, min_right = get_single_junction_overhang(cigar)
+    for i in [m.start() for m in re.finditer(r"N",cigar)]:
+        sub_cigar = cigar[i+1:]
+        left, right = get_single_junction_overhang(sub_cigar)
+        if left != -1 and right != -1:
+            min_left = min(min_left, left)
+            min_right = min(min_right, right)
+    return min_left, min_right
+
+
+def get_single_junction_overhang(cigar):
     """
     Returns the number of reads left/right of a junction as indicated
-    by the N in a cigar string. Return -1, -1 for reads that don't span
+    by the LEFTMOST N in a cigar string. Return -1, -1 for reads that don't span
     junctions.
 
     :param cigar: string
@@ -201,10 +224,16 @@ def filter_reads(
     i = pysam.AlignmentFile(input_bam)
     o = pysam.AlignmentFile(output_bam, "wb", template=i)
     flags = defaultdict(list) # number of flags in the bam file
+    warn_mm = False
+    warn_junction = False
+    warn_x = False
+
     for read in i:
         try:
             flag = 1  # start out as a 'good' read
             cigar = read.cigarstring
+            if 'X' in cigar or '=' in cigar:
+                warn_x = True
             read_seq = read.query_sequence
             read_name = read.query_name
             """
@@ -216,8 +245,11 @@ def filter_reads(
             try:
                 mm = read.get_tag('MD')
             except KeyError:
+                warn_mm = True
                 mm = ''
-
+            """
+            Remove
+            """
             """
             Takes care of soft clipped bases
             (remove bases from the read_seq which are soft clipped
@@ -230,16 +262,18 @@ def filter_reads(
 
             """
             # 5b) Check for small junction overhangs.
-            If junction over hang is small, remove read
+            If match junction over hang is small, (if mismatches occur close to
+            junctions), remove read
             """
 
-            left_overhang, right_overhang = get_junction_overhangs(cigar)
+            left_overhang, right_overhang = get_junction_overhangs(cigar, min_overhang)
             if left_overhang != -1 and right_overhang != -1:
                 if left_overhang < min_overhang or right_overhang < min_overhang:
                     flags['small_overhang'].append(read_name)
                     flag = 3
-            elif left_overhang != -1:
-                print("Warning: CIGAR {} has weird junction mark (or the regex is wrong)")
+            elif left_overhang != -1 or right_overhang != -1:
+                warn_junction = True
+
 
             """
             # 5c) If there exists indels, remove them.
@@ -290,6 +324,14 @@ def filter_reads(
             print("error! {}".format(e))
     i.close()
     o.close()
+    # warn if optional MD tag missing from any read
+    if warn_mm:
+        print("Warning, reads lack optional MD: tag (could not calculate non-ag mismatches)")
+    if warn_junction:
+        print("Warning: CIGAR {} has weird junction mark (or the regex is wrong)")
+    if warn_x:
+        print("Warning: I don't like X or = in CIGAR (use M instead)")
+
     return flags
 
 
@@ -374,8 +416,17 @@ USAGE
             "-s", "--save-filtered",
             dest="save_filtered",
             help="save filtered readsnames",
+            action='store_true',
             required=False,
-            action='store_true'
+            default=False
+        )
+        parser.add_argument(
+            "--reverse-strand",
+            dest="reverse_strand",
+            help="reverse stranded library",
+            action='store_true',
+            required=False,
+            default=False
         )
         # Process arguments
 
@@ -386,13 +437,15 @@ USAGE
         min_underhang = args.min_underhang
         non_ag_mm_threshold = args.non_ag_mm_threshold
         save_filtered = args.save_filtered
+        is_reverse = args.reverse_strand
 
         flags = filter_reads(
             input_bam,
             output_bam,
             min_overhang,
             min_underhang,
-            non_ag_mm_threshold
+            non_ag_mm_threshold,
+            is_reverse
         )
         if save_filtered:
             print('saving filtered readnames to file...')

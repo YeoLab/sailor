@@ -1,0 +1,33 @@
+@HD	VN:1.4	SO:coordinate
+@SQ	SN:chr1	LN:249250621
+@SQ	SN:chr2	LN:243199373
+@SQ	SN:chr3	LN:198022430
+@SQ	SN:chr4	LN:191154276
+@SQ	SN:chr5	LN:180915260
+@SQ	SN:chr6	LN:171115067
+@SQ	SN:chr7	LN:159138663
+@SQ	SN:chr8	LN:146364022
+@SQ	SN:chr9	LN:141213431
+@SQ	SN:chr10	LN:135534747
+@SQ	SN:chr11	LN:135006516
+@SQ	SN:chr12	LN:133851895
+@SQ	SN:chr13	LN:115169878
+@SQ	SN:chr14	LN:107349540
+@SQ	SN:chr15	LN:102531392
+@SQ	SN:chr16	LN:90354753
+@SQ	SN:chr17	LN:81195210
+@SQ	SN:chr18	LN:78077248
+@SQ	SN:chr19	LN:59128983
+@SQ	SN:chr20	LN:63025520
+@SQ	SN:chr21	LN:48129895
+@SQ	SN:chr22	LN:51304566
+@SQ	SN:chrX	LN:155270560
+@SQ	SN:chrY	LN:59373566
+@SQ	SN:chrM	LN:16571
+@RG	ID:foo	PL:illumina	PU:bar	LB:foo	SM:baz	CN:Biogem
+@PG	ID:STAR	PN:STAR	VN:STAR_2.5.2a	CL:STAR   --runMode alignReads   --runThreadN 16   --genomeDir /projects/ps-yeolab/genomes/hg19/star_sjdb   --genomeLoad LoadAndRemove   --readFilesIn /home/ecwheele/scratch/Hundley_eimile_adar3/pipeline_results/GSF860-Hundley-13_S1_R1_001.polyATrim.adapterTrim.rep.bamUnmapped.out.sorted.mate1   /home/ecwheele/scratch/Hundley_eimile_adar3/pipeline_results/GSF860-Hundley-13_S1_R1_001.polyATrim.adapterTrim.rep.bamUnmapped.out.sorted.mate2      --outFileNamePrefix /home/ecwheele/scratch/Hundley_eimile_adar3/pipeline_results/GSF860-Hundley-13_S1_R1_001.polyATrim.adapterTrim.rmRep.bam   --outStd BAM_Unsorted   --outReadsUnmapped Fastx   --outSAMtype BAM   Unsorted      --outSAMattributes All      --outSAMunmapped Within      --outSAMattrRGline ID:foo      --outFilterType BySJout   --outFilterMultimapNmax 10   --outFilterMultimapScoreRange 1   --outFilterScoreMin 10
+@CO	user command line: STAR --runMode alignReads --runThreadN 16 --genomeDir /projects/ps-yeolab/genomes/hg19/star_sjdb --genomeLoad LoadAndRemove --readFilesIn /home/ecwheele/scratch/Hundley_eimile_adar3/pipeline_results/GSF860-Hundley-13_S1_R1_001.polyATrim.adapterTrim.rep.bamUnmapped.out.sorted.mate1 /home/ecwheele/scratch/Hundley_eimile_adar3/pipeline_results/GSF860-Hundley-13_S1_R1_001.polyATrim.adapterTrim.rep.bamUnmapped.out.sorted.mate2 --outSAMunmapped Within --outFilterMultimapNmax 10 --outFilterMultimapScoreRange 1 --outFileNamePrefix /home/ecwheele/scratch/Hundley_eimile_adar3/pipeline_results/GSF860-Hundley-13_S1_R1_001.polyATrim.adapterTrim.rmRep.bam --outSAMattributes All --outStd BAM_Unsorted --outSAMtype BAM Unsorted --outFilterType BySJout --outReadsUnmapped Fastx --outFilterScoreMin 10 --outSAMattrRGline ID:foo
+NB500948:10:HF7VMBGXX:1:22106:9057:8445	99	chr1	11625	1	76M74S	=	11625	75	TGTTTCTCCACAAAGTGTTTACTTTTGGATTTTTGCCAGTCTAACAGGTGAAGCCCTGGAGATTCTTATTAGTGATAGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATTAAAAAAAAAAGGGGGG	AAAAAEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEAEEEEEEEEEEEEEEEAEEEEEEEE/EEEE/EAEEEEEEAE/E<E<EEAEE/<E/<E/<A<EEE/<AEEE/////<EAEA	MD:Z:76	RG:Z:foo	NH:i:4	HI:i:4	jI:B:i,-1	NM:i:0	jM:B:c,-1	nM:i:0	AS:i:149
+NB500948:10:HF7VMBGXX:1:22106:9057:8445	147	chr1	11625	1	1S75M1S	=	11625	-75	TTGTTTCTCCACAAAGTGTTTACTTTTGGATTTTTGCCAGTCTAACAGGTGAAGCCCTGGAGATTCTTATTAGTGAA	EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEAAAAA	MD:Z:75	RG:Z:foo	NH:i:4	HI:i:4	jI:B:i,-1	NM:i:0	jM:B:c,-1	nM:i:0	AS:i:149
+NB500948:10:HF7VMBGXX:2:11206:6825:11247	163	chr1	14070	0	97M53S	=	14070	97	CCTCCCTCCCTCTCAACCACTTGAGCAAACTCCAAGACACCTTCTACCCCGACACCAGCAATTATGCCAAGGGCCATTAGGCTCTCAACATGACTATAGAGACCCCGTATCATCAGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGA	AAAAAEEEEEEEEEAEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE/EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEAEEEEEEEEEEAEEEEEEEEE<EE<EEEE<EEEEEEEEEEEAEEEEEE6<E//</	MD:Z:39T10A12G23G9	RG:Z:foo	NH:i:5	HI:i:1	jI:B:i,-1	NM:i:4	jM:B:c,-1	nM:i:8	AS:i:176
+NB500948:10:HF7VMBGXX:2:11206:6825:11247	83	chr1	14070	0	1S97M17S	=	14070	-97	TCCTCCCTCCCTCTCAACCACTTGAGCAAACTCCAAGACACCTTCTACCCCGACACCAGCAATTATGCCAAGGGCCATTAGGCTCTCAACATGACTATAGAGACCCCGTATCATC	EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE/EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEAAAAA	MD:Z:39T10A12G23G9	RG:Z:foo	NH:i:5	HI:i:1	jI:B:i,-1	NM:i:4	jM:B:c,-1	nM:i:8	AS:i:176

@@ -60,15 +60,55 @@ def test_both_remove_softclip():
 
 ### TEST JUNCTION OVERHANG ###
 
-def test_junction_overhang():
+def test_junction_overhang_1():
+    """
+    test large junction overhangs on each side
+    :return:
+    """
     cigar = '1S51M47N90M'
-    left, right = fr.get_junction_overhangs(cigar)
+    min_overhang = 10
+    left, right = fr.get_junction_overhangs(cigar, min_overhang)
     assert left == 51 and right == 90
 
-def test_no_junction_overhang():
+def test_junction_overhang_2():
+    """
+    Test no junction overhangs
+    :return:
+    """
     cigar = '255M'
-    left, right = fr.get_junction_overhangs(cigar)
+    min_overhang = 10
+    left, right = fr.get_junction_overhangs(cigar, min_overhang)
     assert left == -1 and right == -1
+
+def test_junction_overhang_3():
+    """
+    Test multiple junction overhangs with softclipped read
+    :return:
+    """
+    cigar = '1S53M56N72M3261N8M'
+    min_overhang = 10
+    left, right = fr.get_junction_overhangs(cigar, min_overhang)
+    assert left == 53 and right == 8
+
+def test_junction_overhang_4():
+    """
+    Test multiple junction overhangs with softclipped read and indel
+    :return:
+    """
+    cigar = '1S53M56N72M3261N8M1I100M'
+    min_overhang = 10
+    left, right = fr.get_junction_overhangs(cigar, min_overhang)
+    assert left == 53 and right == 8
+
+def test_junction_overhang_5():
+    """
+    Test junction overhang with hardclipped reads
+    :return:
+    """
+    cigar = '66H35M100N100M'
+    min_overhang = 10
+    left, right = fr.get_junction_overhangs(cigar, min_overhang)
+    assert left == 35 and right == 100
 
 ### TEST UNDERHANG MISMATCHES ###
 

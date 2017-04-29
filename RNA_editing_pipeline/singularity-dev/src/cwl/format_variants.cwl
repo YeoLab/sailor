@@ -34,7 +34,7 @@ inputs:
 
 arguments: [
   "-o",
-  $(inputs.input_gbcf.nameroot).vcf
+  $(inputs.input_gbcf.nameroot).formatted.vcf
   ]
 
 outputs:
@@ -42,5 +42,5 @@ outputs:
   output_vcf:
     type: File
     outputBinding:
-      glob: $(inputs.input_gbcf.nameroot).vcf
+      glob: $(inputs.input_gbcf.nameroot).formatted.vcf
 

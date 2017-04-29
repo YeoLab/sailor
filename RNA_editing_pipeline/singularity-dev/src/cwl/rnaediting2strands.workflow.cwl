@@ -20,6 +20,10 @@ inputs:
   known_snp:
     type: File
 
+  reverse_stranded_library:
+    type: boolean
+    default: true
+
   single_end:
     type: boolean
     default: true
@@ -139,6 +143,7 @@ steps:
     run: split_strands.cwl
     in:
       input_bam: input_bam
+      reverse_stranded_library: reverse_stranded_library
     out: [fwd_output_bam, rev_output_bam]
     
   fwd:
@@ -148,6 +153,7 @@ steps:
       known_snp: known_snp
       reference: reference
       single_end: single_end
+      reverse_stranded_library: reverse_stranded_library
       junction_overhang: junction_overhang
       edge_mutation: edge_mutation
       non_ag: non_ag
@@ -166,6 +172,7 @@ steps:
       known_snp: known_snp
       reference: reference
       single_end: single_end
+      reverse_stranded_library: reverse_stranded_library
       junction_overhang: junction_overhang
       edge_mutation: edge_mutation
       non_ag: non_ag
