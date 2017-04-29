@@ -45,6 +45,47 @@ class CLIError(Exception):
         return self.msg
 
 
+def split_strands(input_bam, output_fwd_bam, output_rev_bam, is_reverse):
+    """
+
+    :param input_bam: basestring
+    :param output_fwd_bam: basestring
+    :param output_rev_bam: basestring
+    :param is_reverse: boolean
+        True if the library is reverse stranded
+    :return 0: successful otherwise 1 if exception
+    """
+    if is_reverse:
+        forward_flags = [16, 83, 163]
+        reverse_flags = [0, 99, 147]
+    else:
+        reverse_flags = [16, 83, 163]
+        forward_flags = [0, 99, 147]
+    try:
+        input_handle = pysam.AlignmentFile(input_bam)
+
+        fwd_handle = pysam.AlignmentFile(
+            output_fwd_bam, "wb", template=input_handle
+        )
+        rev_handle = pysam.AlignmentFile(
+            output_rev_bam, "wb", template=input_handle
+        )
+
+        for read in input_handle:
+            if read.flag in forward_flags:
+                fwd_handle.write(read)
+            elif read.flag in reverse_flags:
+                rev_handle.write(read)
+
+        input_handle.close()
+        fwd_handle.close()
+        rev_handle.close()
+        print(output_fwd_bam)
+        return 0
+    except Exception as e:
+        print(e)
+        return 1
+
 def main(argv=None):  # IGNORE:C0111
     """
     Command line options.
@@ -98,21 +139,30 @@ USAGE
         parser.add_argument(
             "-f", "--output-forward",
             dest="output_fwd_bam",
-            help="output forward strand only bams (checking flags 16, 83, 163)",
+            help="output forward strand only bams",
             default="-",
             required=False
         )
         parser.add_argument(
             "-r", "--output-reverse",
             dest="output_rev_bam",
-            help="output reverse strand only bams (checking flags 0, 99, 147)",
+            help="output reverse strand only bams",
             default="-",
             required=False
         )
+        parser.add_argument(
+            "--reverse-strand",
+            action='store_true',
+            default=False,
+            help="reverse stranded library "
+                 "(FWD FLAGS=16, 83, 163) (REV FLAGS=0, 99, 147)",
+        )
+
         # Process arguments
 
         args = parser.parse_args()
         input_bam = args.input_bam
+        is_reverse = args.reverse_strand
 
         if args.output_fwd_bam is not '-':
             output_fwd_bam = args.output_fwd_bam
@@ -124,27 +174,8 @@ USAGE
         else:
             output_rev_bam = os.path.splitext(input_bam)[0] + '.rev.bam'
 
-        forward_flags = [16, 83, 163]
-        reverse_flags = [0, 99, 147]
-
-        input_handle = pysam.AlignmentFile(input_bam)
-
-        fwd_handle = pysam.AlignmentFile(
-            output_fwd_bam, "wb", template=input_handle
-        )
-        rev_handle = pysam.AlignmentFile(
-            output_rev_bam, "wb", template=input_handle
-        )
-
-        for read in input_handle:
-            if read.flag in forward_flags:
-                rev_handle.write(read)
-            elif read.flag in reverse_flags:
-                fwd_handle.write(read)
-
-        input_handle.close()
-        fwd_handle.close()
-        rev_handle.close()
+        # Call function
+        split_strands(input_bam, output_fwd_bam, output_rev_bam, is_reverse)
 
     except Exception as e:
         print(e)

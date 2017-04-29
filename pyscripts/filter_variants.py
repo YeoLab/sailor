@@ -188,11 +188,12 @@ def vcf2eff(input_vcf, output_eff, min_coverage, cov_metric='DP4',
 
     print("Calling vcf2eff: {}".format(input_vcf))
     o = open(output_eff, 'w')
+    flags = defaultdict(list)
     with open(input_vcf) as f:
         # for line in f:
         for line in f:
             flag = 1  # flag = 1 -> variant good to keep, otherwise toss
-            flags = defaultdict(list)
+
             if line.startswith('#'):  # is vcf header
                 o.write(line)
             else:
@@ -326,16 +327,25 @@ USAGE
             required=False,
             action='store_true'
         )
+        parser.add_argument(
+            "--reverse-strand",
+            dest="reverse_strand",
+            help="reverse stranded library",
+            action='store_true',
+            required=False,
+            default=False
+        )
         # Process arguments
         args = parser.parse_args()
         input_vcf = args.input_vcf
         output_eff = args.output_eff
         save_filtered = args.save_filtered
         dp = args.dp
+        is_reverse = args.reverse_strand
 
         min_coverage = args.min_coverage
 
-        flags = vcf2eff(input_vcf, output_eff, min_coverage, dp)
+        flags = vcf2eff(input_vcf, output_eff, min_coverage, dp, is_reverse)
         if save_filtered:
             print('saving filtered vars to file...')
             for flag, lst in flags.iteritems():

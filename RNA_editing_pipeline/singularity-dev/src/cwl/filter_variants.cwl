@@ -25,13 +25,18 @@ inputs:
     inputBinding:
       position: 3
       prefix: --dp
+  reverse_stranded_library:
+    type: boolean
+    inputBinding:
+      position: 4
+      prefix: --reverse-strand
+
 arguments: [
   "-o",
   $(inputs.input_vcf.nameroot).varfiltered.vcf
   ]
 
 outputs:
-
   output_vcf:
     type: File
     outputBinding:

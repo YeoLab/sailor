@@ -374,8 +374,17 @@ USAGE
             "-s", "--save-filtered",
             dest="save_filtered",
             help="save filtered readsnames",
+            action='store_true',
             required=False,
-            action='store_true'
+            default=False
+        )
+        parser.add_argument(
+            "--reverse-strand",
+            dest="reverse_strand",
+            help="reverse stranded library",
+            action='store_true',
+            required=False,
+            default=False
         )
         # Process arguments
 
@@ -386,13 +395,15 @@ USAGE
         min_underhang = args.min_underhang
         non_ag_mm_threshold = args.non_ag_mm_threshold
         save_filtered = args.save_filtered
+        is_reverse = args.reverse_strand
 
         flags = filter_reads(
             input_bam,
             output_bam,
             min_overhang,
             min_underhang,
-            non_ag_mm_threshold
+            non_ag_mm_threshold,
+            is_reverse
         )
         if save_filtered:
             print('saving filtered readnames to file...')

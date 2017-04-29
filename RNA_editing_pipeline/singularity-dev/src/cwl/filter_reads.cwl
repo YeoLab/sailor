@@ -32,6 +32,12 @@ inputs:
     inputBinding:
       position: 4
       prefix: --non_ag_threshold
+  reverse_stranded_library:
+    type: boolean
+    default: true
+    inputBinding:
+      position: 5
+      prefix: --reverse-strand
 
 arguments: [
   "--output",

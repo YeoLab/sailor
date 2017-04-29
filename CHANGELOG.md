@@ -6,6 +6,28 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.0.3DEV] - UNRELEASED CHECKLIST FOR DEVELOPEMENT ONLY
 ### Added
+- reverse-strand flags for:
+  - filter_reads.py
+  - filter_variants.py
+  - split_strands.py
+- new test_cases for filter_reads
+- new test_cases for filter_variants
+- new test_cases for split_strands
+
+### Changed
+- cwl tools now reflect and have the option for reverse strand libraries (untested for forward)
+- moved complete single-end example example_outputs folder
+- added PE example data
+- changed 'fwd' in reverse strand libraries to output A-G editing sites, and 'rev' in reverse strand libraries to output T-C (previously the opposite).
+
+### Removed
+- removed ...
+
+### Fixed
+- fixed ...
+
+## [0.0.3DEV] - 2017-04-27
+### Added
 - example runscripts and job files 0.0.3DEV versions
 - example input and output files to 0.0.2
 
