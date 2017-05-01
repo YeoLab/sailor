@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - new test_cases for filter_reads
 - new test_cases for filter_variants
 - new test_cases for split_strands
+- example runscripts and job files to 0.0.3DEV versions for PE
 
 ### Changed
 - cwl tools now reflect and have the option for reverse strand libraries (untested for forward)
@@ -24,7 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - removed ...
 
 ### Fixed
-- fixed ...
+- get_junction_overhangs() now checks for multiple junctions per read (ie. 34M10N34M10N34M)
 
 ## [0.0.3DEV] - 2017-04-27
 ### Added

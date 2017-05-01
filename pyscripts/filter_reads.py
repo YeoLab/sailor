@@ -285,7 +285,7 @@ def filter_reads(
             """
             # 2) If primary not primary alignment, throw out
             """
-    
+
             if read.is_secondary:
                 flags['not_primary'].append(read_name)
                 flag = 5
@@ -308,7 +308,7 @@ def filter_reads(
                 sense = True if read.is_reverse == False else False
 
             """
-            # 5c) Search MDZ for A, T's in reference, if mutations are not 
+            # 5c) Search MDZ for A, T's in reference, if mutations are not
             #     A-G (sense) or T-C (antisense), add to non_ag_mm_counts
             #     threshold. If non_ag_mm_counts > threshold, toss the whole
             #     read. Otherwise, allow up to the maximum allowable non-AG

@@ -100,6 +100,15 @@ outputs:
     type: File
     outputSource: rank_edits/output_conf
 
+  rank_edits_output_vcf:
+    type: File
+    outputSource: rank_edits/output_vcf
+
+  rank_edits_output_bed:
+    type: File
+    outputSource: rank_edits/output_bed
+
+
 
 steps:
 
@@ -169,5 +178,6 @@ steps:
       edit_fraction: edit_fraction
       alpha: alpha
       beta: beta
-    out: [output_conf]
+
+    out: [output_conf, output_bed, output_vcf]
 

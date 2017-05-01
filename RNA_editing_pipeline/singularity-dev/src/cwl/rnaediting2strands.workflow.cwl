@@ -100,9 +100,17 @@ outputs:
     type: File
     outputSource: fwd/rank_edits_output
 
-  rev_sorted_bam_output:
+  fwd_rank_edits_output_bed:
     type: File
-    outputSource: rev/sorted_bam_output
+    outputSource: fwd/rank_edits_output_bed
+
+  fwd_rank_edits_output_vcf:
+    type: File
+    outputSource: fwd/rank_edits_output_vcf
+
+  fwd_sorted_bam_output:
+    type: File
+    outputSource: fwd/sorted_bam_output
 
   rev_rmdup_bam_output:
     type: File
@@ -136,6 +144,13 @@ outputs:
     type: File
     outputSource: rev/rank_edits_output
 
+  rev_rank_edits_output_bed:
+    type: File
+    outputSource: rev/rank_edits_output_bed
+
+  rev_rank_edits_output_vcf:
+    type: File
+    outputSource: rev/rank_edits_output_vcf
 
 steps:
 
@@ -163,7 +178,7 @@ steps:
       beta: beta
       edit_fraction: edit_fraction
     out:
-      [sorted_bam_output, rmdup_bam_output, filtered_bam_output, mpileup_output, call_snvs_output, format_variants_output, filter_variants_output, filter_known_snp_output, rank_edits_output]
+      [sorted_bam_output, rmdup_bam_output, filtered_bam_output, mpileup_output, call_snvs_output, format_variants_output, filter_variants_output, filter_known_snp_output, rank_edits_output, rank_edits_output_vcf, rank_edits_output_bed]
        
   rev:
     run: rnaediting1strand.cwl
@@ -182,6 +197,6 @@ steps:
       beta: beta
       edit_fraction: edit_fraction
     out:
-      [sorted_bam_output, rmdup_bam_output, filtered_bam_output, mpileup_output, call_snvs_output, format_variants_output, filter_variants_output, filter_known_snp_output, rank_edits_output]
+      [sorted_bam_output, rmdup_bam_output, filtered_bam_output, mpileup_output, call_snvs_output, format_variants_output, filter_variants_output, filter_known_snp_output, rank_edits_output, rank_edits_output_vcf, rank_edits_output_bed]
     
 

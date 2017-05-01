@@ -29,10 +29,6 @@ __version__ = 0.1
 __date__ = '2016-07-13'
 __updated__ = '2016-07-13'
 
-DEBUG = 0
-TESTRUN = 0
-PROFILE = 0
-
 
 class CLIError(Exception):
     """
@@ -48,6 +44,42 @@ class CLIError(Exception):
 
     def __unicode__(self):
         return self.msg
+
+
+def as_bed(line):
+    """
+    Returns the BED6-formatted line representation of the CONF file.
+    :param line:
+    :return:
+    """
+    line = line.split('\t')
+    if line[3] == 'T' and line[4] == 'C':
+        strand = '-'
+    elif line[3] == 'A' and line[4] == 'G':
+        strand = '+'
+    else:
+        print('WARNING: not a very good AG editing candidate!')
+        strand = '0'
+    bed_name = '{}|{}>{}|{}'.format(
+        line[2], line[3], line[4], line[6]
+    )
+    return '{}\t{}\t{}\t{}\t{}\t{}\n'.format(
+        line[0], int(line[1])-1, int(line[1]), bed_name, line[5], strand
+    )
+
+
+def as_vcf(line):
+    """
+    Returns a VCF-formatted line representation of the CONF file
+    :param line:
+    :return:
+    """
+    line = line.split('\t')
+    var_identifier = 'cov_{}|editID_{}:{}'.format(line[2], line[0], line[1])
+    return '{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n'.format(
+        line[0], line[1], var_identifier, line[3], line[4], line[5],
+        "PASS", line[9]
+    )
 
 
 def rank_edits(alfa, beta, cov_margin, conf_min, eff_file, outfile):
@@ -136,26 +168,32 @@ def rank_edits(alfa, beta, cov_margin, conf_min, eff_file, outfile):
                          ]) +
                          "\t".join(["", region, info, format, cond]) +
                          "\n")
-        return confidence, return_string
+        return return_string
 
     o = open(outfile, 'w')
+    ob = open(os.path.splitext(outfile)[0] + '.bed', 'w')
+    ov = open(os.path.splitext(outfile)[0] + '.vcf', 'w')
     with open(eff_file, 'r') as f:
         for eff in f:
             if eff.startswith("\#\#") or eff.startswith("##"):
-                pass
+                ov.write(eff)
             elif eff.startswith("#CHROM"):  # ammend header of EFF file
+
                 line = eff.split("\t")  # to contain extra numeric columns
-                sys.stderr.write("\t".join(line))
                 line[2] = "NUM_READS"
-                line[5] = "EDIT%"
-                line.insert(5, "POST_EDIT%")
+                line[5] = "PRE_PSEUDOCOUNT_EDIT%"
+                line.insert(5, "POST_PSEUDOCOUNT_EDIT%")
                 line.insert(5, "CONFIDENCE")
                 o.write('\t'.join(line))
+                ov.write(eff)
             else:
-                conf, to_string = process(eff)
-                if conf > conf_min:
-                    o.write(to_string)
+                to_string = process(eff)
+                ob.write(as_bed(to_string))
+                ov.write(as_vcf(to_string))
+                o.write(to_string)
     o.close()
+    ob.close()
+    ov.close()
 
 
 def main(argv=None):  # IGNORE:C0111
@@ -191,95 +229,67 @@ def main(argv=None):  # IGNORE:C0111
 USAGE
 ''' % (program_shortdesc, str(__date__))
 
-    try:
-        # Setup argument parser
-        parser = ArgumentParser(
-            description=program_license,
-            formatter_class=RawDescriptionHelpFormatter
-        )
-        parser.add_argument(
-            '-V', '--version',
-            action='version',
-            version=program_version_message
-        )
-        parser.add_argument(
-            "-i", "--input",
-            dest="input_eff",
-            help="variant eff(vcf) file for filtering",
-            required=True
-        )
-        parser.add_argument(
-            "-o", "--output",
-            dest="output_conf",
-            help="output noSNP (vcf) file with known snps removed.",
-            required=True
-        )
-        parser.add_argument(
-            "-c", "--cov_margin",
-            dest="cov_margin",
-            help="minimum edit fraction %",
-            required=False,
-            default=0.01,
-            type=float
-        )
-        parser.add_argument(
-            "-a", "--alpha",
-            dest="alpha",
-            help="alpha parameter",
-            required=False,
-            default=0,
-            type=int
-        )
-        parser.add_argument(
-            "-b", "--beta",
-            dest="beta",
-            help="beta parameter",
-            required=False,
-            default=0,
-            type=int
-        )
+    # Setup argument parser
+    parser = ArgumentParser(
+        description=program_license,
+        formatter_class=RawDescriptionHelpFormatter
+    )
+    parser.add_argument(
+        '-V', '--version',
+        action='version',
+        version=program_version_message
+    )
+    parser.add_argument(
+        "-i", "--input",
+        dest="input_eff",
+        help="variant eff(vcf) file for filtering",
+        required=True
+    )
+    parser.add_argument(
+        "-o", "--output",
+        dest="output_conf",
+        help="output noSNP (vcf) file with known snps removed.",
+        required=True
+    )
+    parser.add_argument(
+        "-c", "--cov_margin",
+        dest="cov_margin",
+        help="minimum edit fraction %",
+        required=False,
+        default=0.01,
+        type=float
+    )
+    parser.add_argument(
+        "-a", "--alpha",
+        dest="alpha",
+        help="alpha parameter",
+        required=False,
+        default=0,
+        type=int
+    )
+    parser.add_argument(
+        "-b", "--beta",
+        dest="beta",
+        help="beta parameter",
+        required=False,
+        default=0,
+        type=int
+    )
 
-        # Process arguments
-        args = parser.parse_args()
-        input_eff = args.input_eff
-        outfile = args.output_conf
-        cov_margin = args.cov_margin
-        alpha = args.alpha
-        beta = args.beta
+    # Process arguments
+    args = parser.parse_args()
+    input_eff = args.input_eff
+    outfile = args.output_conf
+    cov_margin = args.cov_margin
+    alpha = args.alpha
+    beta = args.beta
 
-        rank_edits(alpha, beta, cov_margin, 0, input_eff, outfile)
-        return 0
-    except KeyboardInterrupt:
-        ### handle keyboard interrupt ###
-        return 0
-    except Exception, e:
-        if DEBUG or TESTRUN:
-            raise (e)
-        indent = len(program_name) * " "
-        sys.stderr.write(program_name + ": " + repr(e) + "\n")
-        sys.stderr.write(indent + "  for help use --help")
-        return 2
+    #
+
+    rank_edits(alpha, beta, cov_margin, 0, input_eff, outfile)
+    return 0
+
 
 
 if __name__ == "__main__":
-    if DEBUG:
-        sys.argv.append("-h")
-        sys.argv.append("-v")
-        sys.argv.append("-r")
-    if TESTRUN:
-        import doctest
-
-        doctest.testmod()
-    if PROFILE:
-        import cProfile
-        import pstats
-
-        profile_filename = 'editing.filter_reads_profile.txt'
-        cProfile.run('main()', profile_filename)
-        statsfile = open("profile_stats.txt", "wb")
-        p = pstats.Stats(profile_filename, stream=statsfile)
-        stats = p.strip_dirs().sort_stats('cumulative')
-        stats.print_stats()
-        statsfile.close()
-        sys.exit(0)
     sys.exit(main())

@@ -35,7 +35,7 @@ inputs:
 
 arguments: [
   "--output",
-  $(inputs.input_noSNP.nameroot).conf
+  $(inputs.input_noSNP.nameroot).ranked.conf
   ]
 
 outputs:
@@ -43,4 +43,12 @@ outputs:
   output_conf:
     type: File
     outputBinding:
-      glob: $(inputs.input_noSNP.nameroot).conf
+      glob: $(inputs.input_noSNP.nameroot).ranked.conf
+  output_bed:
+    type: File
+    outputBinding:
+      glob: $(inputs.input_noSNP.nameroot).ranked.bed
+  output_vcf:
+    type: File
+    outputBinding:
+      glob: $(inputs.input_noSNP.nameroot).ranked.vcf
