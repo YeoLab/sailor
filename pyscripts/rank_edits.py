@@ -76,13 +76,83 @@ def as_vcf(line):
     """
     line = line.split('\t')
     var_identifier = 'cov_{}|editID_{}:{}'.format(line[2], line[0], line[1])
-    return '{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n'.format(
+    return '{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(
         line[0], line[1], var_identifier, line[3], line[4], line[5],
-        "PASS", line[9]
+        line[8], line[9], line[10], line[11]
     )
 
 
-def rank_edits(alfa, beta, cov_margin, conf_min, eff_file, outfile):
+def process(alfa, beta, cov_margin, keep_all_edited, line):
+    """
+    Calculates, for a single line in a VCF formatted file, the
+    confidence score based on depth of coverage and edit fraction %.
+
+    :param line: string
+        single vcf formatted line.
+    :return confidence: float
+        confidence value of the line
+    :return return_string: basestring
+        full vcf formatted line with confidence
+    """
+    (chr, pos, dot, ref, alt, qual,
+     filter, info, format, cond) = line.split("\t")[:10]
+
+    if chr[0] == "#":
+        print line,
+        return
+
+    # retrieve total number of reads mapping to position
+    infos = info.split(";")
+    (dp, i16) = infos[:2]
+
+    assert dp[:2] == "DP"
+    num_reads = int(dp[3:])
+
+    """
+    # retrieve numbers of A's and G's on forward and reverse strand
+    assert i16[:3] == "I16", i16
+    (a_fwd, a_rev, g_fwd, g_rev) = (int(x) for x in i16[4:].split(",")[:4])
+    print("warning: i16 not available")
+    """
+
+    dp4 = re.findall("DP4\=([\d\,]+)", info)[0]
+
+    (a_fwd, a_rev, g_fwd, g_rev) = (int(x) for x in dp4.split(","))
+
+    a = a_fwd + a_rev
+    g = g_fwd + g_rev
+    num_reads = a + g
+    edit_frac = g / float(num_reads)
+
+    # calc smoothed counts and confidence
+    G = g + alfa
+    A = a + beta
+    theta = G / float(G + A)
+
+    ########  MOST IMPORTANT LINE  ########
+    # calculates the confidence of theta as
+    # P( theta < cov_margin | A, G) ~ Beta_theta(G, A)
+    confidence = 1 - betainc(G, A, cov_margin)
+
+    # keep 100% edited sites or toss
+    if A == 0 and not keep_all_edited:
+        confidence = 0
+        region = 'SNP'
+    else:
+        region = 'PASS'
+
+    # print line in CONF format
+
+    return_string = ("\t".join([chr, pos, str(num_reads), ref, alt, ""]) +
+                     "\t".join(str(round(y, 9)) for y in [
+                         confidence, theta, edit_frac
+                     ]) +
+                     "\t".join(["", region, info, format, cond]) +
+                     "\n")
+    return return_string
+
+
+def rank_edits(alfa, beta, cov_margin, keep_all_edited, eff_file, outfile):
     """
     Step 8: Score editing sites based on coverage and edit %
 
@@ -94,8 +164,8 @@ def rank_edits(alfa, beta, cov_margin, conf_min, eff_file, outfile):
         add G pseudocount
     :param cov_margin: float
         minimum allowable edit fraction
-    :param conf_min: float
-        minimum confidence score to output
+    :param keep_all_edited: boolean
+        report 100% edited sites
     :param eff_file:
         input vcf or snpEFF (vcf format) file
     :param outfile:
@@ -105,95 +175,33 @@ def rank_edits(alfa, beta, cov_margin, conf_min, eff_file, outfile):
     """
     print("Ranking Editing Sites: {}".format(eff_file))
 
-    def process(line):
-        """
-        Calculates, for a single line in a VCF formatted file, the
-        confidence score based on depth of coverage and edit fraction %.
-
-        :param line: string
-            single vcf formatted line.
-        :return confidence: float
-            confidence value of the line
-        :return return_string: basestring
-            full vcf formatted line with confidence
-        """
-        (chr, pos, dot, ref, alt, qual,
-         filter, info, format, cond) = line.split("\t")[:10]
-
-        if chr[0] == "#":
-            print line,
-            return
-
-        # retrieve total number of reads mapping to position 
-        infos = info.split(";")
-        (dp, i16) = infos[:2]
-
-        assert dp[:2] == "DP"
-        num_reads = int(dp[3:])
-
-        """
-        # retrieve numbers of A's and G's on forward and reverse strand
-        assert i16[:3] == "I16", i16
-        (a_fwd, a_rev, g_fwd, g_rev) = (int(x) for x in i16[4:].split(",")[:4])
-        print("warning: i16 not available")
-        """
-
-        dp4 = re.findall("DP4\=([\d\,]+)", info)[0]
-
-        (a_fwd, a_rev, g_fwd, g_rev) = (int(x) for x in dp4.split(","))
-
-        a = a_fwd + a_rev
-        g = g_fwd + g_rev
-        num_reads = a + g
-        edit_frac = g / float(num_reads)
-
-        # calc smoothed counts and confidence
-        G = g + alfa
-        A = a + beta
-        theta = G / float(G + A)
-
-        ########  MOST IMPORTANT LINE  ########
-        # calculates the confidence of theta as
-        # P( theta < cov_margin | A, G) ~ Beta_theta(G, A) 
-        confidence = 1 - betainc(G, A, cov_margin)
-
-        # retrieve genic region found by snpEff
-        region = "-"
-
-        # print line in CONF format
-
-        return_string = ("\t".join([chr, pos, str(num_reads), ref, alt, ""]) +
-                         "\t".join(str(round(y, 9)) for y in [
-                             confidence, theta, edit_frac
-                         ]) +
-                         "\t".join(["", region, info, format, cond]) +
-                         "\n")
-        return return_string
-
     o = open(outfile, 'w')
     ob = open(os.path.splitext(outfile)[0] + '.bed', 'w')
-    ov = open(os.path.splitext(outfile)[0] + '.vcf', 'w')
+    # ov = open(os.path.splitext(outfile)[0] + '.vcf', 'w')
     with open(eff_file, 'r') as f:
         for eff in f:
             if eff.startswith("\#\#") or eff.startswith("##"):
-                ov.write(eff)
+                pass
+                # ov.write(eff)
             elif eff.startswith("#CHROM"):  # ammend header of EFF file
-
+                # TODO: implement VCF file
                 line = eff.split("\t")  # to contain extra numeric columns
                 line[2] = "NUM_READS"
                 line[5] = "PRE_PSEUDOCOUNT_EDIT%"
                 line.insert(5, "POST_PSEUDOCOUNT_EDIT%")
                 line.insert(5, "CONFIDENCE")
                 o.write('\t'.join(line))
-                ov.write(eff)
+                # ov.write(eff)
             else:
-                to_string = process(eff)
+                to_string = process(
+                    alfa, beta, cov_margin, keep_all_edited, eff
+                )
                 ob.write(as_bed(to_string))
-                ov.write(as_vcf(to_string))
+                # ov.write(as_vcf(to_string))
                 o.write(to_string)
     o.close()
     ob.close()
-    ov.close()
+    # ov.close()
 
 
 def main(argv=None):  # IGNORE:C0111
@@ -254,7 +262,7 @@ USAGE
     parser.add_argument(
         "-c", "--cov_margin",
         dest="cov_margin",
-        help="minimum edit fraction %",
+        help="minimum edit fraction",
         required=False,
         default=0.01,
         type=float
@@ -275,7 +283,14 @@ USAGE
         default=0,
         type=int
     )
-
+    parser.add_argument(
+        "--keep-100-edited",
+        dest="keep100",
+        help="keep 100 percent edited sites (by default, these are tossed as SNPs)",
+        required=False,
+        default=False,
+        action='store_true'
+    )
     # Process arguments
     args = parser.parse_args()
     input_eff = args.input_eff
@@ -283,10 +298,11 @@ USAGE
     cov_margin = args.cov_margin
     alpha = args.alpha
     beta = args.beta
+    keep_all_edited = args.keep100
 
     #
 
-    rank_edits(alpha, beta, cov_margin, 0, input_eff, outfile)
+    rank_edits(alpha, beta, cov_margin, keep_all_edited, input_eff, outfile)
     return 0
 
 

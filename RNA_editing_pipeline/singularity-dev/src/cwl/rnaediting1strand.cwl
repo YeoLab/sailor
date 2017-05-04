@@ -25,6 +25,10 @@ inputs:
     type: boolean
     default: true
 
+  reverse_split_bam:
+    type: boolean
+    default: false
+
   junction_overhang:
     type: int
     default: 10
@@ -100,9 +104,9 @@ outputs:
     type: File
     outputSource: rank_edits/output_conf
 
-  rank_edits_output_vcf:
-    type: File
-    outputSource: rank_edits/output_vcf
+  # rank_edits_output_vcf:
+  #   type: File
+  #   outputSource: rank_edits/output_vcf
 
   rank_edits_output_bed:
     type: File
@@ -161,7 +165,7 @@ steps:
       input_vcf: format_variants/output_vcf
       min_variant_coverage: min_variant_coverage
       dp: dp
-      reverse_stranded_library: reverse_stranded_library
+      reverse_split_bam: reverse_split_bam
     out: [output_vcf]
 
   filter_known_snp:
@@ -179,5 +183,5 @@ steps:
       alpha: alpha
       beta: beta
 
-    out: [output_conf, output_bed, output_vcf]
-
+    # out: [output_conf, output_bed, output_vcf]
+    out: [output_conf, output_bed]

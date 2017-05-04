@@ -109,12 +109,9 @@ def get_dp_and_i(info):
     return dp, i
 
 
-def split_i_and_get_allele(i, reverse_stranded):
+def split_i_and_get_allele(i, reverse_split):
     """
-    Splits i and returns the ref and alt alleles. Returns the strand that
-    is supported by the most reads. If there's a tie, defaults to
-    negative (if reversely stranded library) or positive (if not reversely
-    stranded).
+    Splits i and returns the ref and alt numbers.
 
     i[0] = forward ref allele
     i[1] = reverse ref allele
@@ -129,21 +126,28 @@ def split_i_and_get_allele(i, reverse_stranded):
 
     :param i: string
         dp4 string
-    :param reverse_stranded: boolean
-        is reversely stranded (truseq stranded)
+    :param reverse_split: boolean
+        is reversely split in step 1 of the workflow (split_strands.py)
     :return ref_num: int
         number of reads supporting reference allele
     :return alt_num: int
         number of reads supporting alt allele
     :return sense: boolean
-        True if the majority of alleles support the same strand as the
-        library prep protocol (if reverse_stranded==True, and rev allele
-        num > fwd allele num, then sense is True).
+        True if the vcf file comes from the 'forward'-designated bam files
+    :see
 
     """
     i = i.split(',')
     fwd_alleles = int(i[0]) + int(i[2])
     rev_alleles = int(i[1]) + int(i[3])
+    ref_num = int(i[0]) + int(i[1])
+    alt_num = int(i[2]) + int(i[3])
+    if reverse_split:
+        sense = False
+    else:
+        sense = True
+    # TODO: remove this. May be useful for checking unstranded reads in the future.
+    '''
     if reverse_stranded:
         if fwd_alleles <= rev_alleles:
             sense = True
@@ -162,6 +166,7 @@ def split_i_and_get_allele(i, reverse_stranded):
             sense = False
             ref_num = int(i[1])
             alt_num = int(i[3])
+    '''
     return ref_num, alt_num, sense
 
 
@@ -328,9 +333,9 @@ USAGE
             action='store_true'
         )
         parser.add_argument(
-            "--reverse-strand",
-            dest="reverse_strand",
-            help="reverse stranded library",
+            "--reverse-split",
+            dest="reverse_split",
+            help="vcf originated from reversely flagged reads",
             action='store_true',
             required=False,
             default=False
@@ -341,7 +346,7 @@ USAGE
         output_eff = args.output_eff
         save_filtered = args.save_filtered
         dp = args.dp
-        is_reverse = args.reverse_strand
+        is_reverse = args.reverse_split
 
         min_coverage = args.min_coverage
 

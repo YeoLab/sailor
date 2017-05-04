@@ -59,8 +59,18 @@ inputs:
   edit_fraction:
     type: float
     default: 0.01
-    
-    
+
+### These shouldn't change at all. I just need to ensure ###
+### the forward/reverse flags are explicitly set ###
+
+  fwd_is_reverse:
+    type: boolean
+    default: false
+
+  rev_is_reverse:
+    type: boolean
+    default: true
+
 outputs:
 
 
@@ -104,9 +114,9 @@ outputs:
     type: File
     outputSource: fwd/rank_edits_output_bed
 
-  fwd_rank_edits_output_vcf:
-    type: File
-    outputSource: fwd/rank_edits_output_vcf
+  # fwd_rank_edits_output_vcf:
+  #   type: File
+  #   outputSource: fwd/rank_edits_output_vcf
 
   fwd_sorted_bam_output:
     type: File
@@ -148,9 +158,9 @@ outputs:
     type: File
     outputSource: rev/rank_edits_output_bed
 
-  rev_rank_edits_output_vcf:
-    type: File
-    outputSource: rev/rank_edits_output_vcf
+  # rev_rank_edits_output_vcf:
+  #   type: File
+  #   outputSource: rev/rank_edits_output_vcf
 
 steps:
 
@@ -169,6 +179,7 @@ steps:
       reference: reference
       single_end: single_end
       reverse_stranded_library: reverse_stranded_library
+      reverse_split_bam: fwd_is_reverse
       junction_overhang: junction_overhang
       edge_mutation: edge_mutation
       non_ag: non_ag
@@ -178,8 +189,9 @@ steps:
       beta: beta
       edit_fraction: edit_fraction
     out:
-      [sorted_bam_output, rmdup_bam_output, filtered_bam_output, mpileup_output, call_snvs_output, format_variants_output, filter_variants_output, filter_known_snp_output, rank_edits_output, rank_edits_output_vcf, rank_edits_output_bed]
-       
+      # [sorted_bam_output, rmdup_bam_output, filtered_bam_output, mpileup_output, call_snvs_output, format_variants_output, filter_variants_output, filter_known_snp_output, rank_edits_output, rank_edits_output_vcf, rank_edits_output_bed]
+      [sorted_bam_output, rmdup_bam_output, filtered_bam_output, mpileup_output, call_snvs_output, format_variants_output, filter_variants_output, filter_known_snp_output, rank_edits_output, rank_edits_output_bed]
+
   rev:
     run: rnaediting1strand.cwl
     in: 
@@ -188,6 +200,7 @@ steps:
       reference: reference
       single_end: single_end
       reverse_stranded_library: reverse_stranded_library
+      reverse_split_bam: rev_is_reverse
       junction_overhang: junction_overhang
       edge_mutation: edge_mutation
       non_ag: non_ag
@@ -197,6 +210,7 @@ steps:
       beta: beta
       edit_fraction: edit_fraction
     out:
-      [sorted_bam_output, rmdup_bam_output, filtered_bam_output, mpileup_output, call_snvs_output, format_variants_output, filter_variants_output, filter_known_snp_output, rank_edits_output, rank_edits_output_vcf, rank_edits_output_bed]
+      # [sorted_bam_output, rmdup_bam_output, filtered_bam_output, mpileup_output, call_snvs_output, format_variants_output, filter_variants_output, filter_known_snp_output, rank_edits_output, rank_edits_output_vcf, rank_edits_output_bed]
+      [sorted_bam_output, rmdup_bam_output, filtered_bam_output, mpileup_output, call_snvs_output, format_variants_output, filter_variants_output, filter_known_snp_output, rank_edits_output, rank_edits_output_bed]
     
 

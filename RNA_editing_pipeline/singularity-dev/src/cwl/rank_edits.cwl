@@ -48,7 +48,7 @@ outputs:
     type: File
     outputBinding:
       glob: $(inputs.input_noSNP.nameroot).ranked.bed
-  output_vcf:
-    type: File
-    outputBinding:
-      glob: $(inputs.input_noSNP.nameroot).ranked.vcf
+  # output_vcf:
+  #   type: File
+  #   outputBinding:
+  #     glob: $(inputs.input_noSNP.nameroot).ranked.vcf

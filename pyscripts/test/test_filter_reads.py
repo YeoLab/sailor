@@ -2,6 +2,7 @@
 
 import os
 import pytest
+import pysam
 from pyscripts import filter_reads as fr
 
 ### TEST SOFTCLIP ###
@@ -184,3 +185,9 @@ def test_non_ag_mismatches_5():
     md = '10A3T0T10'
     sense = True
     assert fr.non_ag_mismatches(read_seq, md, sense) == 2
+
+def test_non_ag_mismatches_6():
+    # first in pair
+    input_bam = 'test/bam/NB500948_10_HF7VMBGXX_1_13301_3145_8212.bam'
+    i = pysam.AlignmentFile(input_bam)
+    pass

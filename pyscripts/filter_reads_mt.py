@@ -23,7 +23,11 @@ import os
 import re
 import pysam
 from collections import defaultdict
-
+import concurrent.futures
+import itertools
+from multiprocessing import Pool
+from functools import partial
+from itertools import izip_longest
 from argparse import ArgumentParser
 from argparse import RawDescriptionHelpFormatter
 
@@ -193,9 +197,127 @@ def non_ag_mismatches(read_seq, md, sense):
     return non_ag_mm_counts
 
 
+def process(read, min_overhang, min_underhang, non_ag_mm_threshold,
+        reverse_stranded):
+    flag = 1  # start out as a 'good' read
+    cigar = read.cigarstring
+    if 'X' in cigar or '=' in cigar:
+        warn_x = True
+    read_seq = read.query_sequence
+    read_name = read.query_name
+    """
+    Throw out unmapped reads
+    """
+    if read.is_unmapped:
+        flags['unmapped'].append(read.name)
+        return ''  # must be here, otherwise reads won't have CIGAR
+    try:
+        mm = read.get_tag('MD')
+    except KeyError:
+        warn_mm = True
+        mm = ''
+    """
+    Remove
+    """
+    """
+    Takes care of soft clipped bases
+    (remove bases from the read_seq which are soft clipped
+    to not interfere with mis-alignments downstream)
+    """
+    left_softclip, right_softclip = get_softclip(cigar)
+    read_seq = remove_softclipped_reads(
+        left_softclip, right_softclip, read_seq
+    )
+
+    """
+    # 5b) Check for small junction overhangs.
+    If match junction over hang is small, (if mismatches occur close to
+    junctions), remove read
+    """
+
+    left_overhang, right_overhang = get_junction_overhangs(cigar, min_overhang)
+    if left_overhang != -1 and right_overhang != -1:
+        if left_overhang < min_overhang or right_overhang < min_overhang:
+            return -1
+    elif left_overhang != -1 or right_overhang != -1:
+        warn_junction = True
+
+
+    """
+    # 5c) If there exists indels, remove them.
+    """
+    if 'I' in cigar or 'D' in cigar:
+        return -1
+
+    """
+    # 2) If primary not primary alignment, throw out
+    """
+
+    if read.is_secondary:
+        return -1
+
+    """
+    # MD:Z tag-based filters. If there is a mismatch on either end of the read, throw out.
+    """
+
+    if is_mismatch_before_n_flank_of_read(mm, min_underhang):
+        return -1
+
+    """
+    # Manually setting reversed reads to 'sense' strand per truseq
+    library protocols (Default is truseq reverse stranded)
+    """
+    if reverse_stranded:
+        sense = True if read.is_reverse == True else False
+    else:
+        sense = True if read.is_reverse == False else False
+
+    """
+    # 5c) Search MDZ for A, T's in reference, if mutations are not
+    #     A-G (sense) or T-C (antisense), add to non_ag_mm_counts
+    #     threshold. If non_ag_mm_counts > threshold, toss the whole
+    #     read. Otherwise, allow up to the maximum allowable non-AG
+    #     mismatches before tossing. Default: 1 mm
+    """
+    if non_ag_mismatches(read_seq, mm, sense) > non_ag_mm_threshold:
+        return -1
+
+    return read
+
+
+def grouped_process(group, min_overhang, min_underhang, non_ag_mm_threshold,
+                    reverse_stranded):
+
+    reads = []
+    group = [x for x in group if x is not None]
+    for read in group:
+        r = process(read=read, min_overhang=min_overhang,
+            min_underhang=min_underhang, non_ag_mm_threshold=non_ag_mm_threshold,
+            reverse_stranded=reverse_stranded
+        )
+        if type(r) != int:
+            reads.append(r)
+    return reads
+
+
+def grouper(iterable, n, fillvalue=None):
+    """
+    Collect data into fixed-length chunks or blocks
+    grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx
+
+    :param iterable:
+    :param n:
+    :param fillvalue:
+    :return:
+    """
+
+    args = [iter(iterable)] * n
+    return izip_longest(fillvalue=fillvalue, *args)
+
+
 def filter_reads(
         input_bam, output_bam, min_overhang, min_underhang,
-        non_ag_mm_threshold, reverse_stranded=True,
+        non_ag_mm_threshold, reverse_stranded=True, threads=1, groupsize=1000
 ):
     """
     # Step 3: filter reads
@@ -223,107 +345,41 @@ def filter_reads(
     print("Filtering reads on: {}".format(input_bam))
     i = pysam.AlignmentFile(input_bam)
     o = pysam.AlignmentFile(output_bam, "wb", template=i)
-    flags = defaultdict(list) # number of flags in the bam file
+
     warn_mm = False
     warn_junction = False
     warn_x = False
 
-    for read in i:
-        try:
-            flag = 1  # start out as a 'good' read
-            cigar = read.cigarstring
-            if 'X' in cigar or '=' in cigar:
-                warn_x = True
-            read_seq = read.query_sequence
-            read_name = read.query_name
-            """
-            Throw out unmapped reads
-            """
-            if read.is_unmapped:
-                flags['unmapped'].append(read.name)
-                continue  # must be here, otherwise reads won't have CIGAR
-            try:
-                mm = read.get_tag('MD')
-            except KeyError:
-                warn_mm = True
-                mm = ''
-            """
-            Remove
-            """
-            """
-            Takes care of soft clipped bases
-            (remove bases from the read_seq which are soft clipped
-            to not interfere with mis-alignments downstream)
-            """
-            left_softclip, right_softclip = get_softclip(cigar)
-            read_seq = remove_softclipped_reads(
-                left_softclip, right_softclip, read_seq
-            )
+    func = partial(
+        grouped_process, min_overhang=min_overhang,
+        min_underhang=min_underhang, non_ag_mm_threshold=non_ag_mm_threshold,
+        reverse_stranded=reverse_stranded
+    )
+    '''
+    pool = Pool(processes=max_threads)
+    out = pool.map(
+        partial(
+            process, min_overhang=min_overhang, min_underhang=min_underhang,
+            non_ag_mm_threshold=non_ag_mm_threshold,
+            reverse_stranded=reverse_stranded, out_handle=o
+        ), i, 1000
+    )
+    '''
 
-            """
-            # 5b) Check for small junction overhangs.
-            If match junction over hang is small, (if mismatches occur close to
-            junctions), remove read
-            """
+    executor = concurrent.futures.ThreadPoolExecutor(max_workers=threads)
+    futures = [executor.submit(func, group) for group in grouper(i, groupsize)]
+    concurrent.futures.wait(futures)
+    c = 0
 
-            left_overhang, right_overhang = get_junction_overhangs(cigar, min_overhang)
-            if left_overhang != -1 and right_overhang != -1:
-                if left_overhang < min_overhang or right_overhang < min_overhang:
-                    flags['small_overhang'].append(read_name)
-                    flag = 3
-            elif left_overhang != -1 or right_overhang != -1:
-                warn_junction = True
+    for f in futures:
+        for read in f.result():
+            c+=1
+            o.write(read)
+    print('{} reads kept.'.format(c))
 
-
-            """
-            # 5c) If there exists indels, remove them.
-            """
-            if 'I' in cigar or 'D' in cigar:
-                flags['indel'].append(read_name)
-                flag = 4
-
-            """
-            # 2) If primary not primary alignment, throw out
-            """
-    
-            if read.is_secondary:
-                flags['not_primary'].append(read_name)
-                flag = 5
-
-            """
-            # MD:Z tag-based filters. If there is a mismatch on either end of the read, throw out.
-            """
-
-            if is_mismatch_before_n_flank_of_read(mm, min_underhang):
-                flags['small_underhang'].append(read_name)
-                flag = 6
-
-            """
-            # Manually setting reversed reads to 'sense' strand per truseq
-            library protocols (Default is truseq reverse stranded)
-            """
-            if reverse_stranded:
-                sense = True if read.is_reverse == True else False
-            else:
-                sense = True if read.is_reverse == False else False
-
-            """
-            # 5c) Search MDZ for A, T's in reference, if mutations are not 
-            #     A-G (sense) or T-C (antisense), add to non_ag_mm_counts
-            #     threshold. If non_ag_mm_counts > threshold, toss the whole
-            #     read. Otherwise, allow up to the maximum allowable non-AG
-            #     mismatches before tossing. Default: 1 mm
-            """
-            if non_ag_mismatches(read_seq, mm, sense) > non_ag_mm_threshold:
-                flags['non_ag_exceeded'].append(read_name)
-                flag = 7
-
-            if flag == 1:
-                o.write(read)
-        except TypeError as e:
-            print("error! {}".format(e))
     i.close()
     o.close()
+    # pool.close()
     # warn if optional MD tag missing from any read
     if warn_mm:
         print("Warning, reads lack optional MD: tag (could not calculate non-ag mismatches)")
@@ -331,8 +387,6 @@ def filter_reads(
         print("Warning: CIGAR {} has weird junction mark (or the regex is wrong)")
     if warn_x:
         print("Warning: I don't like X or = in CIGAR (use M instead)")
-
-    return flags
 
 
 def main(argv=None): # IGNORE:C0111
@@ -428,6 +482,13 @@ USAGE
             required=False,
             default=False
         )
+        parser.add_argument(
+            "--threads",
+            dest="threads",
+            help="how many threads to use (default 4)",
+            required=False,
+            default=4
+        )
         # Process arguments
 
         args = parser.parse_args()
@@ -438,14 +499,16 @@ USAGE
         non_ag_mm_threshold = args.non_ag_mm_threshold
         save_filtered = args.save_filtered
         is_reverse = args.reverse_strand
+        threads = args.threads
 
-        flags = filter_reads(
+        filter_reads(
             input_bam,
             output_bam,
             min_overhang,
             min_underhang,
             non_ag_mm_threshold,
-            is_reverse
+            is_reverse,
+            threads
         )
         if save_filtered:
             print('saving filtered readnames to file...')

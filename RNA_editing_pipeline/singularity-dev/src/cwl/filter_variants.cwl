@@ -25,11 +25,11 @@ inputs:
     inputBinding:
       position: 3
       prefix: --dp
-  reverse_stranded_library:
+  reverse_split_bam:
     type: boolean
     inputBinding:
       position: 4
-      prefix: --reverse-strand
+      prefix: --reverse-split
 
 arguments: [
   "-o",

@@ -33,8 +33,8 @@ def test_split_i_and_get_allele_1():
     :return:
     """
     i = '0,3,0,3'
-    ref, alt, sense = fv.split_i_and_get_allele(i, reverse_stranded=True)
-    assert sense == True
+    ref, alt, sense = fv.split_i_and_get_allele(i, reverse_split=True)
+    assert sense == False
     assert ref == 3
     assert alt == 3
 
@@ -49,8 +49,8 @@ def test_split_i_and_get_allele_2():
     :return:
     """
     i = '0,3,0,3'
-    ref, alt, sense = fv.split_i_and_get_allele(i, reverse_stranded=False)
-    assert sense == False
+    ref, alt, sense = fv.split_i_and_get_allele(i, reverse_split=False)
+    assert sense == True
     assert ref == 3
     assert alt == 3
 
@@ -65,13 +65,27 @@ def test_split_i_and_get_allele_3():
     :return:
     """
     i = '3,3,3,3'
-    ref, alt, sense = fv.split_i_and_get_allele(i, reverse_stranded=True)
-    assert sense == True
-    assert ref == 3
-    assert alt == 3
+    ref, alt, sense = fv.split_i_and_get_allele(i, reverse_split=True)
+    assert sense == False
+    assert ref == 6
+    assert alt == 6
 
+def test_split_i_and_get_allele_4():
+    """
+    Reverse_stranded library TIE
+    i[0] = forward ref allele
+    i[1] = reverse ref allele
+    i[2] = forward non-ref allele
+    i[3] = reverse non-ref allele
+    :return:
+    """
+    i = '29,26,0,24'
+    ref, alt, sense = fv.split_i_and_get_allele(i, reverse_split=True)
+    assert sense == False
+    assert ref == 26+29
+    assert alt == 24
 
-def test_split_i_and_get_allele():
+def test_split_i_and_get_allele_5():
     """
     Forward stranded library TIE
     i[0] = forward ref allele
@@ -81,10 +95,10 @@ def test_split_i_and_get_allele():
     :return:
     """
     i = '3,3,3,3'
-    ref, alt, sense = fv.split_i_and_get_allele(i, reverse_stranded=False)
+    ref, alt, sense = fv.split_i_and_get_allele(i, reverse_split=False)
     assert sense == True
-    assert ref == 3
-    assert alt == 3
+    assert ref == 6
+    assert alt == 6
 
 ### TEST PASS EDITING SITE PHENOTYPE ###
 
@@ -122,9 +136,9 @@ def test_pass_fail_variant_1():
     output_eff = 'test/vcf/pass_fail_variant_1.eff'
     min_coverage = 5
     cov_metric = 'DP4'
-    reverse_stranded = False
+    reverse_split = False
 
-    flags = fv.vcf2eff(vcf_file, output_eff, min_coverage, cov_metric, reverse_stranded)
+    flags = fv.vcf2eff(vcf_file, output_eff, min_coverage, cov_metric, reverse_split)
     assert flags['min_coverage'] == ['chrI:4295']
 
 def test_pass_fail_variant_2():
@@ -136,10 +150,16 @@ def test_pass_fail_variant_2():
     output_eff = 'test/vcf/pass_fail_variant_2.eff'
     min_coverage = 5
     cov_metric = 'DP'
-    reverse_stranded = False
+    reverse_split = False
 
-    flags = fv.vcf2eff(vcf_file, output_eff, min_coverage, cov_metric, reverse_stranded)
+    flags = fv.vcf2eff(vcf_file, output_eff, min_coverage, cov_metric, reverse_split)
     assert flags['min_coverage'] == ['chrI:4295']
+
+
+### These are all mostly trivial, we don't guess the strand of the gene
+#   that we map to anymore. Now we are explicit since we split the bam files
+#   before hand (5-4-17).
+
 
 def test_pass_fail_variant_3():
     """
@@ -151,9 +171,9 @@ def test_pass_fail_variant_3():
     output_eff = 'test/vcf/pass_fail_variant_3.eff'
     min_coverage = 5
     cov_metric = 'DP'
-    reverse_stranded = False
+    reverse_split = False
 
-    flags = fv.vcf2eff(vcf_file, output_eff, min_coverage, cov_metric, reverse_stranded)
+    flags = fv.vcf2eff(vcf_file, output_eff, min_coverage, cov_metric, reverse_split)
     assert flags['not_editing'] == ['chrI:4295']
 
 def test_pass_fail_variant_4():
@@ -166,9 +186,9 @@ def test_pass_fail_variant_4():
     output_eff = 'test/vcf/pass_fail_variant_4.eff'
     min_coverage = 5
     cov_metric = 'DP'
-    reverse_stranded = True
+    reverse_split = True
 
-    flags = fv.vcf2eff(vcf_file, output_eff, min_coverage, cov_metric, reverse_stranded)
+    flags = fv.vcf2eff(vcf_file, output_eff, min_coverage, cov_metric, reverse_split)
     assert flags['not_editing'] == ['chrI:3771']
 
 def test_pass_fail_variant_5():
@@ -181,9 +201,9 @@ def test_pass_fail_variant_5():
     output_eff = 'test/vcf/pass_fail_variant_5.eff'
     min_coverage = 5
     cov_metric = 'DP'
-    reverse_stranded = False
+    reverse_split = True
 
-    flags = fv.vcf2eff(vcf_file, output_eff, min_coverage, cov_metric, reverse_stranded)
+    flags = fv.vcf2eff(vcf_file, output_eff, min_coverage, cov_metric, reverse_split)
     assert flags['not_editing'] == ['chrI:3771']
 
 def test_pass_fail_variant_6():
@@ -196,7 +216,8 @@ def test_pass_fail_variant_6():
     output_eff = 'test/vcf/pass_fail_variant_6.eff'
     min_coverage = 5
     cov_metric = 'DP'
-    reverse_stranded = True
+    reverse_split = True
 
-    flags = fv.vcf2eff(vcf_file, output_eff, min_coverage, cov_metric, reverse_stranded)
-    assert flags['not_editing'] == ['chrI:4295']
+    flags = fv.vcf2eff(vcf_file, output_eff, min_coverage, cov_metric, reverse_split)
+    assert flags['not_editing'] == ['chrI:3771']
+

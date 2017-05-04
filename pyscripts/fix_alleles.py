@@ -396,63 +396,10 @@ USAGE
             type=int,
             default=10
         )
-        parser.add_argument(
-            "-e", "--edge_mutation",
-            dest="min_underhang",
-            help="minimum nt away from read end to call valid mutation",
-            required=False,
-            type=int, default=0
-        )
-        parser.add_argument(
-            "-ag", "--non_ag_threshold",
-            dest="non_ag_mm_threshold",
-            help="allow up to [n] non-AG mutations in a read before tossing."
-                 " Default: 1",
-            required=False,
-            type=int,
-            default=1
-        )
-        parser.add_argument(
-            "-s", "--save-filtered",
-            dest="save_filtered",
-            help="save filtered readsnames",
-            action='store_true',
-            required=False,
-            default=False
-        )
-        parser.add_argument(
-            "--reverse-strand",
-            dest="reverse_strand",
-            help="reverse stranded library",
-            action='store_true',
-            required=False,
-            default=False
-        )
         # Process arguments
 
         args = parser.parse_args()
-        input_bam = args.input_bam
-        output_bam = args.output_bam
-        min_overhang = args.min_overhang
-        min_underhang = args.min_underhang
-        non_ag_mm_threshold = args.non_ag_mm_threshold
-        save_filtered = args.save_filtered
-        is_reverse = args.reverse_strand
-
-        flags = filter_reads(
-            input_bam,
-            output_bam,
-            min_overhang,
-            min_underhang,
-            non_ag_mm_threshold,
-            is_reverse
-        )
-        if save_filtered:
-            print('saving filtered readnames to file...')
-            for flag, lst in flags.iteritems():
-                o = open(output_bam + '.{}'.format(flag), 'w')
-                o.write('\n'.join(lst))
-                o.close()
+        input_conf
         return 0
     except KeyboardInterrupt:
         return 0
