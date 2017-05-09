@@ -65,6 +65,10 @@ inputs:
     type: boolean
     default: true
 
+  keep_all_edited:
+    type: boolean
+    default: false
+
 outputs:
 
 
@@ -182,6 +186,7 @@ steps:
       edit_fraction: edit_fraction
       alpha: alpha
       beta: beta
+      keep_all_edited: keep_all_edited
 
     # out: [output_conf, output_bed, output_vcf]
     out: [output_conf, output_bed]

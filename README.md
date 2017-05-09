@@ -16,9 +16,9 @@ That's it!
 [Example Known SNPs](https://github.com/YeoLab/rna_editing_pipeline/blob/master/example_data/knownSNPs.bed)
 
 ### Download YAML files that describe expt parameters:
-[Example YAML](https://github.com/YeoLab/rna_editing_pipeline/blob/master/example_data/example-minimal.yml)
+[Example YAML](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/jobs/example-se_minimal.yml)
 
-[Example YAML with optional arguments](https://github.com/YeoLab/rna_editing_pipeline/blob/master/example_data/example.yml)
+[Example YAML with optional arguments](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/jobs/example-se.yml)
 # Running the Pipeline:
 ```
 rnaediting example-minimal.yml

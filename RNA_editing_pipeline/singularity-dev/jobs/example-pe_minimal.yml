@@ -1,0 +1,14 @@
+# aligned BAM file
+input_bam:
+  class: File
+  path: ../example_data/example.paired_end.chr21.bam
+
+# reference file
+reference:
+  class: File
+  path: ../example_data/hg19.chr21.fa
+
+# known snps file
+known_snp:
+  class: File
+  path: ../example_data/hg19_knownSNPs.bed

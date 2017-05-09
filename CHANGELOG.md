@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
+## [0.0.3DEV] - 5-9-2017
+### Added
+- example yaml files for PE and SE
+- keep-100-edited flag to the 'rank_edits.py' script to keep or discard 100% edited SNVs
+
+### Changed
+- changed ...
+
+### Removed
+- removed ...
+
+### Fixed
+- fixed paths in README
+
 ## [0.0.3DEV] - 5-4-2017
 ### Added
 - BED file outputs to replace conf file as the final output

@@ -14,4 +14,4 @@ reference:
 # known snps file
 known_snp:
   class: File
-  path: ../../../example_data/hg19_knownSNPs.bed
+  path: /projects/ps-yeolab3/bay001/annotations/hg19.commonSNPs147.bed

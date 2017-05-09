@@ -32,6 +32,12 @@ inputs:
     inputBinding:
       position: 4
       prefix: -b
+  keep_all_edited:
+    type: boolean
+    default: false
+    inputBinding:
+      position: 5
+      prefix: --keep-100-edited
 
 arguments: [
   "--output",
