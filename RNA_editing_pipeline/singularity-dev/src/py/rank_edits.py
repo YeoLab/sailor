@@ -144,7 +144,6 @@ def process(alfa, beta, cov_margin, keep_all_edited, line):
         confidence = 0
         region = 'POSSIBLE_SNP'
     else:
-        confidence = 1
         region = 'PASS'
 
     # print line in CONF format
