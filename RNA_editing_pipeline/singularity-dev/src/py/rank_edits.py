@@ -58,8 +58,13 @@ def as_bed(line):
     elif line[3] == 'A' and line[4] == 'G':
         strand = '+'
     else:
-        print('WARNING: not a very good AG editing candidate!')
-        strand = '0'
+        print('WARNING: multiallelic SNV found')
+        if line[3] == 'A':
+            strand = '+'
+        elif line[3] == 'T':
+            strand = '-'
+        else:
+            strand = '0'
     bed_name = '{}|{}>{}|{}'.format(
         line[2], line[3], line[4], line[6]
     )
@@ -137,7 +142,7 @@ def process(alfa, beta, cov_margin, keep_all_edited, line):
     # keep 100% edited sites or toss
     if A == 0 and not keep_all_edited:
         confidence = 0
-        region = 'SNP'
+        region = 'POSSIBLE_SNP'
     else:
         confidence = 1
         region = 'PASS'

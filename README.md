@@ -28,6 +28,8 @@ rnaediting example-minimal.yml
 
 The pipeline only requires 3 arguments: The BAM file, the reference genome, and a list of known SNPs to filter out. Here is the full list and explanation of optional arguments you can provide as needed in the job file:
 
+Running time takes a few hours for C elegans data, so sit back and relax by reading the rest of this README.
+
 These are the minimum required arguments needed to run the pipeline (you can see the same information inside the example-minimal.yml file):
 
 
@@ -50,6 +52,11 @@ This file contains a list of known SNPs which will be filtered from the list of 
 known_snp:
   class: File
   path: knownSNPs.bed
+```
+
+This is a reversely stranded library
+```YAML
+reverse_stranded_library: true
 ```
 
 This option [true] or false specifies whether or not the reads are single or paired end. This is equivalent to the [-s option](http://www.htslib.org/doc/samtools.html) of ```samtools rmdup``` step, which is part of the workflow.
@@ -85,3 +92,82 @@ alpha: 0
 beta: 0
 edit_fraction: 0.01
 ```
+
+Keep 100% edited sites as confident 'edited' sites (true), or flag as 'possible snps' (false)
+```YAML
+keep_all_edited: false
+```
+
+# Outputs:
+There are lots of intermediate files, but the ones we want are the bed files (it's a long name, but it helps trace all the steps and filters that the pipeline goes through):
+```
+SAMPLENAME.fwd.sorted.rmdup.readfiltered.formatted.varfiltered.snpfiltered.ranked.bed
+SAMPLENAME.rev.sorted.rmdup.readfiltered.formatted.varfiltered.snpfiltered.ranked.bed
+```
+These BED6 files correspond to candidate editing sites found at either the positive strand (fwd) or negative strand (rev):
+
+### Format of the BED file:
+
+1. chromosome
+2. start (0-based) index of an editing site
+3. end (open) index of an editing site
+4. name containing information about coverage|snv|edit% (```84|A>G|0.011904762``` corresponds to an A>G (+) site covered by 84 reads that is ~1% edited)
+5. confidence score
+6. strand
+
+You can load these BED files onto [IGV](http://software.broadinstitute.org/software/igv/download) and see if your gene of interest is edited.
+For a more global viewpoint, you will need to filter this BED file based on the 'confidence score' (tab 5) using anything that can sort/filter a tabbed file. Then you can look at these filtered sites on IGV.
+
+If you don't see many sites, you can relax the parameters, or look into the intermediate files described below:
+
+If our sample is ```sample.bam```
+
+sorted BAM file
+
+```example.fwd.sorted.bam```
+
+sorted BAM file with 'duplicate reads' removed (defined as reads sharing the same external mapped coordinates, keeping reads with the highest mapping quality (see [samtools](http://www.htslib.org/doc/samtools.html))
+
+```example.fwd.sorted.rmdup.bam```
+
+The above BAM file filtered of reads that do not pass read-centric thresholds.
+
+```example.fwd.sorted.rmdup.readfiltered.bam```
+
+The above BAM file as pileup in gbcf (binary) format
+
+```example.fwd.sorted.rmdup.readfiltered.gbcf```
+
+The above gbcf file in human-readable vcf format
+
+```example.fwd.sorted.rmdup.readfiltered.vcf```
+
+The above vcf file in a more familiar vcf format
+
+```example.fwd.sorted.rmdup.readfiltered.formatted.vcf```
+
+The above vcf file filtered of SNVs that do not pass the position-centric thresholds
+
+```example.fwd.sorted.rmdup.readfiltered.formatted.varfiltered.vcf```
+
+The above vcf file filtered of SNVs that are also known SNPs
+
+```example.fwd.sorted.rmdup.readfiltered.formatted.varfiltered.snpfiltered.vcf```
+
+The above vcf file in a tabular 'confidence' format, showing
+
+```example.fwd.sorted.rmdup.readfiltered.formatted.varfiltered.snpfiltered.ranked.conf```
+
+##### Format of the conf file:
+1. (#CHROM) : chromosome
+2. (POS) : 1-based position of the editing site
+3. (NUM_READS) : number of total coverage
+4. (REF) : reference allele
+5. (ALT) : alternate allele
+6. (CONFIDENCE) : confidence score
+7. (POST_PSEUDOCOUNT_EDIT%) : if we add pseudocounts, the edit % will be here
+8. (PRE_PSEUDOCOUNT_EDIT%) : native edit %
+9. (FILTER) : either PASS for a valid editing candidate (regardless of score), or SNP if the site was 100% A>G
+10, (INFO) : vcf "info" column (see [vcf](https://samtools.github.io/hts-specs/VCFv4.2.pdf) format for details)
+11. (GENOTYPE) : vcf "genotype" column
+12. (baz) : vcf "genotype value" column
