@@ -9,28 +9,33 @@ RNA Editing
 That's it!
 
 ### (Optional) Download Small Example Files:
-[Example BAM](https://github.com/YeoLab/rna_editing_pipeline/blob/master/example_data/example.bam)
+[Example Single-end BAM](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/example_data/example.single_end.bam)
 
-[Example Reference](https://github.com/YeoLab/rna_editing_pipeline/blob/master/example_data/ce11.chrI.fa)
+[Example Paired-end BAM](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/example_data/example.paired_end.bam)
 
-[Example Known SNPs](https://github.com/YeoLab/rna_editing_pipeline/blob/master/example_data/knownSNPs.bed)
+
+[Example Reference](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/example_data/ce11.chrI.fa)
+
+[Example Known SNPs](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/example_data/knownSNPs.bed)
 
 ### Download YAML files that describe expt parameters:
-[Example YAML](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/jobs/example-se_minimal.yml)
+[Example YAML (for single-end BAMs)](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/jobs/example-se_minimal.yml)
 
-[Example YAML with optional arguments](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/jobs/example-se.yml)
+[Example YAML (for paired-end BAMs)](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/jobs/example-pe_minimal.yml)
+
+
 # Running the Pipeline:
 ```
-rnaediting example-minimal.yml
+rnaediting-*.img example-minimal.yml
 ```
 
-### Running the data with optional arguments:
+### Running the data with required arguments:
 
 The pipeline only requires 3 arguments: The BAM file, the reference genome, and a list of known SNPs to filter out. Here is the full list and explanation of optional arguments you can provide as needed in the job file:
 
 Running time takes a few hours for C elegans data, so sit back and relax by reading the rest of this README.
 
-These are the minimum required arguments needed to run the pipeline (you can see the same information inside the example-minimal.yml file):
+These are the minimum required arguments needed to run the pipeline (you can see the same information inside the example-se_minimal.yml file.):
 
 
 This is a BAM file of your reads aligned to the genome. You can generate this file using any short read aligner, and it does not need to be sorted (the pipeline will split + sort things for you). Our example.bam is a downsampled BAM file containing the first 10,000 lines (9,983 reads) of a real sample:
@@ -54,7 +59,13 @@ known_snp:
   path: knownSNPs.bed
 ```
 
-This parameter specifies whether or not we're dealing with a reversely stranded library:
+### Running the data with optional arguments:
+
+If you find that using default parameters is not fit to your data, you may want to play around with the optional arguments. You can find example YAML configuaration files [here](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/jobs).
+
+Here is a description of some optional arguments and their defaults:
+
+This parameter [true] or false specifies whether or not we're dealing with a reversely stranded library:
 ```YAML
 reverse_stranded_library: true
 ```
@@ -111,7 +122,7 @@ These BED6 files correspond to candidate editing sites found at either the posit
 1. chromosome
 2. start (0-based) index of an editing site
 3. end (open) index of an editing site
-4. name containing information about coverage|snv|edit% (```84|A>G|0.011904762``` corresponds to an A>G (+) site covered by 84 reads that is ~1% edited)
+4. unique name containing information about coverage|snv|edit% (```84|A>G|0.011904762``` corresponds to an A>G (+) site covered by 84 reads that is ~1% edited)
 5. confidence score
 6. strand
 
@@ -185,7 +196,7 @@ The above vcf file in a tabular 'confidence' format, showing:
 example.fwd.sorted.rmdup.readfiltered.formatted.varfiltered.snpfiltered.ranked.conf
 ```
 
-##### Format of the conf file:
+##### Format (tabs) of the conf file:
 1. (#CHROM) : chromosome
 2. (POS) : 1-based position of the editing site
 3. (NUM_READS) : number of total coverage

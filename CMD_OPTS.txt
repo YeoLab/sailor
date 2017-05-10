@@ -12,6 +12,8 @@ rnaediting \
 --beta BETA \
 --edit_fraction EDIT_FRACTION \
 --dp DP \
+--keep_all_edited KEEP_ALL_EDITED \
+--reverse_stranded_library REVERSE_STRANDED_LIBRARY
 
 ################################## ARGUMENTS ##################################
 
@@ -27,3 +29,5 @@ rnaediting \
 --beta (DEFAULT 0): 'pseudocount' parameter. Use higher number for low coverage datasets (see: https://en.wikipedia.org/wiki/Beta_distribution)
 --edit_fraction (DEFAULT 0.01): the minimum allowable edit fraction (higher fraction -> more stringent)
 --dp (DEFAULT DP4): filters coverage based on either the "DP" flag or the "DP4" flag in a vcf file (see: https://www.biostars.org/p/46361/)
+--keep_all_edited (DEFAULT false): tells us whether or not we think 100% A>G sites are editing or not. If set to 'false', 100% SNVs will be flagged as 'SNP' in the conf file, and scored as 0 in the bedfile.
+--reverse_stranded_library (DEFAULT true): if the library is reversely stranded, look for A>G on reversely-mapped reads.
