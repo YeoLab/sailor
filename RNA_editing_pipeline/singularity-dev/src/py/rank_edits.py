@@ -106,20 +106,6 @@ def process(alfa, beta, cov_margin, keep_all_edited, line):
         print line,
         return
 
-    # retrieve total number of reads mapping to position
-    infos = info.split(";")
-    (dp, i16) = infos[:2]
-
-    assert dp[:2] == "DP"
-    num_reads = int(dp[3:])
-
-    """
-    # retrieve numbers of A's and G's on forward and reverse strand
-    assert i16[:3] == "I16", i16
-    (a_fwd, a_rev, g_fwd, g_rev) = (int(x) for x in i16[4:].split(",")[:4])
-    print("warning: i16 not available")
-    """
-
     dp4 = re.findall("DP4\=([\d\,]+)", info)[0]
 
     (a_fwd, a_rev, g_fwd, g_rev) = (int(x) for x in dp4.split(","))

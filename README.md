@@ -1,4 +1,6 @@
-RNA Editing 
+[logo]: https://github.com/YeoLab/rna_editing_pipeline/logo/sailor-5-lower.png
+
+# Software for Accurately Identifying Locations Of RNA-editing (SAILOR)
 
 # Installation:
 
@@ -11,12 +13,12 @@ That's it!
 ### (Optional) Download Small Example Files:
 [Example Single-end BAM](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/example_data/example.single_end.bam)
 
-[Example Reference](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/example_data/ce11.chrI.fa)
+[Example Reference (in FASTA format)](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/example_data/ce11.chrI.fa)
 
-[Example Known SNPs](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/example_data/knownSNPs.bed)
+[Example Known SNPs (in BED3 format)](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/example_data/knownSNPs.bed)
 
 
-### Download YAML files that describe expt parameters:
+### Download YAML files that describe experiment parameters:
 [Example YAML (for single-end BAMs)](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/jobs/example-se_minimal.yml)
 
 ##### Equivalent paired-end (hg19) example YAML files can be found [here](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/jobs/), corresponding to example data [here](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/example_data/)
@@ -119,7 +121,7 @@ These BED6 files correspond to candidate editing sites found at either the posit
 1. chromosome
 2. start (0-based) index of an editing site
 3. end (open) index of an editing site
-4. unique name containing information about coverage|snv|edit% (```84|A>G|0.011904762``` corresponds to an A>G (+) site covered by 84 reads that is ~1% edited)
+4. unique name containing information about coverage|variant type|edit% (```84|A>G|0.011904762``` corresponds to an A>G (+) site covered by 84 reads that is ~1% edited)
 5. confidence score
 6. strand
 
@@ -203,6 +205,8 @@ example.fwd.sorted.rmdup.readfiltered.formatted.varfiltered.snpfiltered.ranked.c
 7. (POST_PSEUDOCOUNT_EDIT%) : if we add pseudocounts, the edit % will be here
 8. (PRE_PSEUDOCOUNT_EDIT%) : native edit %
 9. (FILTER) : either PASS for a valid editing candidate (regardless of score), or SNP if the site was 100% A>G
-10, (INFO) : vcf "info" column (see [vcf](https://samtools.github.io/hts-specs/VCFv4.2.pdf) format for details)
+10. (INFO) : vcf "info" column (see [vcf](https://samtools.github.io/hts-specs/VCFv4.2.pdf) format for details)
 11. (GENOTYPE) : vcf "genotype" column
 12. (baz) : vcf "genotype value" column
+
+###
