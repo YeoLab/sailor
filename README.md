@@ -2,6 +2,8 @@
 
 # Software for Accurately Identifying Locations Of RNA-editing (SAILOR)
 
+SAILOR implements published methodologies to assess A-to-I RNA editing in a specific tissue and developed a robust platform for easy identification of editing. The SAILOR software is publicly available and designed for ease of use to run with one single command, requiring only a BAM-formatted file of the sequence alignments, a FASTA-formatted reference genome sequence (of any organism or cell-type), and a BED-formatted file of known SNPs. Notably, SAILOR allows the user to specify a range of filtering criteria including: Non A-to-I mismatch rate, location of mismatches (to account for biases at the end of reads), and a minimum read coverage required to call variants. Users may relax any of these filtering criteria and/or pursue analysis of A-to-I editing sites with lower confidence scores.
+
 # Installation:
 
 [Install Singularity](http://singularity.lbl.gov/)
@@ -108,6 +110,11 @@ This parameter specifies options to either 1) keep 100% edited sites as confiden
 keep_all_edited: false
 ```
 
+This parameter specifies whether or not you want to skip the 'samtools rmdup' step of the pipeline:
+```YAML
+skip_duplicate_removal: false
+```
+
 # Outputs:
 There are lots of intermediate files, but the ones we want are the bed files (it's a long name, but it helps trace all the steps and filters that the pipeline goes through):
 ```
@@ -208,3 +215,16 @@ example.fwd.sorted.rmdup.readfiltered.formatted.varfiltered.snpfiltered.ranked.c
 10. (INFO) : vcf "info" column (see [vcf](https://samtools.github.io/hts-specs/VCFv4.2.pdf) format for details)
 11. (GENOTYPE) : vcf "genotype" column
 12. (baz) : vcf "genotype value" column
+
+# References:
+
+Washburn, M. C., Kakaradov, B., Sundararaman, B., Wheeler, E., Hoon, S., Yeo, G. W., & Hundley, H. A. (2014): The dsRBP and inactive editor ADR-1 utilizes dsRNA binding to regulate A-to-I RNA editing across the C. elegans transcriptome. 
+Cell reports, 6(4), 599-607.
+
+Amstutz, Peter; Crusoe, Michael R.; Tijanić, Nebojša; Chapman, Brad; Chilton, John; Heuer, Michael; Kartashov, Andrey; Leehr, Dan; Ménager, Hervé; Nedeljkovich, Maya; Scales, Matt; Soiland-Reyes, Stian; Stojanovic, Luka (2016): Common Workflow Language, v1.0. 
+figshare. https://doi.org/10.6084/m9.figshare.3115156.v2
+Retrieved: 22 13, May 11, 2017 (GMT)
+
+Kurtzer GM, Sochat V, Bauer MW (2017): Singularity: Scientific containers for mobility of compute. 
+PLoS ONE 12(5): e0177459. https://doi.org/10.1371/journal.pone.0177459
+
