@@ -19,7 +19,7 @@ That's it!
 
 
 ### Download YAML files that describe experiment parameters:
-[Example YAML (for single-end BAMs)](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/jobs/example-se_minimal.yml)
+[Example YAML (for single-end BAMs)](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/jobs/example-se.yml)
 
 ##### Equivalent paired-end (hg19) example YAML files can be found [here](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/jobs/), corresponding to example data [here](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/example_data/)
 
@@ -96,7 +96,7 @@ min_variant_coverage: 5
 dp: DP4
 ```
 
-These parameters can relax or tighten the beta distribution curve used to score confident editing sites. Increasing the alpha and beta parameters will generally relax coverage requirements, which is sometimes useful for low-coverage data. See the [original paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3959997/) for more info:
+These parameters can relax or tighten the beta distribution curve used to score confident editing sites. Essentially these numbers adjust the pseudocount added to variant site coverage. Therefore increasing the alpha and beta parameters will generally relax coverage requirements, which is sometimes useful for low-coverage data. See the [original paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3959997/) for more info:
 ```YAML
 alpha: 0
 beta: 0
@@ -208,5 +208,3 @@ example.fwd.sorted.rmdup.readfiltered.formatted.varfiltered.snpfiltered.ranked.c
 10. (INFO) : vcf "info" column (see [vcf](https://samtools.github.io/hts-specs/VCFv4.2.pdf) format for details)
 11. (GENOTYPE) : vcf "genotype" column
 12. (baz) : vcf "genotype value" column
-
-###
