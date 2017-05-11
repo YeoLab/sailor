@@ -2,7 +2,12 @@
 
 # Software for Accurately Identifying Locations Of RNA-editing (SAILOR)
 
-SAILOR implements published methodologies to assess A-to-I RNA editing in a specific tissue and developed a robust platform for easy identification of editing. The SAILOR software is publicly available and designed for ease of use to run with one single command, requiring only a BAM-formatted file of the sequence alignments, a FASTA-formatted reference genome sequence (of any organism or cell-type), and a BED-formatted file of known SNPs. Notably, SAILOR allows the user to specify a range of filtering criteria including: Non A-to-I mismatch rate, location of mismatches (to account for biases at the end of reads), and a minimum read coverage required to call variants. Users may relax any of these filtering criteria and/or pursue analysis of A-to-I editing sites with lower confidence scores.
+SAILOR implements published methodologies to assess adenosine to inosine changes in RNA-SEQ data for easy identification of transcriptome-wide editing. 
+The SAILOR pipeline is available as both a CWL workflow and as a Singularity image and is designed for ease of use to run with one command. 
+It requires a [BAM](https://genome.ucsc.edu/FAQ/FAQformat.html#format5.1)-formatted file of the sequence alignments, a [FASTA](http://genetics.bwh.harvard.edu/pph/FASTA.html)-formatted reference genome sequence (of any organism or cell-type), 
+and a [BED3](https://genome.ucsc.edu/FAQ/FAQformat.html#format1)-formatted file of known SNPs. SAILOR allows the user to specify a range of filtering criteria including: Non A-to-I mismatch rate, 
+location of mismatches (to account for biases at the end of reads), and a minimum read coverage required to call variants. Users may relax any 
+of these filtering criteria and/or pursue analysis of A-to-I editing sites with lower confidence scores.
 
 # Installation:
 
