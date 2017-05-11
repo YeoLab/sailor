@@ -27,7 +27,7 @@ That's it!
 
 # Running the Pipeline:
 ```
-rnaediting-*.img example-minimal.yml
+sailor-1.0.4.img example-se.yml
 ```
 
 ### Running the data with required arguments:
