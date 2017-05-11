@@ -1,4 +1,4 @@
-[logo]: https://github.com/YeoLab/rna_editing_pipeline/logo/sailor-5-lower.png
+[logo]: https://github.com/YeoLab/rna_editing_pipeline/logo/sailor-logo.png
 
 # Software for Accurately Identifying Locations Of RNA-editing (SAILOR)
 
