@@ -31,7 +31,7 @@ sailor-1.0.4 ce11_example.yaml
 
 The pipeline only requires 3 arguments: The BAM file, the reference genome, and a list of known SNPs to filter out. Here is the full list and explanation of optional arguments you can provide as needed in the job file:
 
-Running time takes a few hours for C elegans data, so sit back and relax by reading the rest of this README.
+Running time for the examples should be quick! Running on a complete dataset takes a few hours for C elegans data, so sit back and relax by reading the rest of this README.
 
 These are the minimum required arguments needed to run the pipeline (you can see the same information inside the example.yml file):
 
