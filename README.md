@@ -22,7 +22,9 @@ That's it!
 To obtain small example files (bundled with the executable), just type:
 ```
 ./sailor-1.0.4
-...
+```
+(After a brief overview of options and expected parameters, type 'y' to populate the current folder with example files):
+```
 Do you want me to copy now into your current directory an example of data input files and a job template (y/-):y
 ```
 
