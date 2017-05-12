@@ -1,0 +1,24 @@
+#!/bin/bash
+
+
+# ifnotskip --skip samtools rmdup DUPEDBAM -s RMBAM
+# is replaced with:
+# echo skipping samtools rmdup  DUPEDBAM -s RMBAM
+
+# ifnotskip samtools rmdup DUPEDBAM -s RMBAM
+# is replaced with:
+# samtools rmdup  DUPEDBAM -s RMBAM
+
+
+# if syntax if [ $TEST = '--skip' ] ; then echo YAY ; else echo NAH ; fi
+
+if [ ${1} = '--skip' ]
+then
+  echo skipping ${@:2}
+  DUPEDBAM=${4}
+  RMBAM=${5}
+  cp ${DUPEDBAM} ${RMBAM}
+else
+  ${@:1}
+fi
+

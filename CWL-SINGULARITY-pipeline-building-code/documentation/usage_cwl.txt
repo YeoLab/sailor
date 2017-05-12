@@ -1,0 +1,52 @@
+This is sailor 1.0.4  (software for A-I calling On RNA)
+
+Usage:
+
+   sailor-1.0.4 SAILORDATA
+
+Arguments:
+
+  SAILORDATA is a text file  with 3 arguments specified as key/values as below
+
+  The 3 required arguments are: The BAM file, the reference genome, and a list of known SNPs to filter out. 
+
+  # This is a BAM file of your reads aligned to the genome. 
+  # You can generate this file using any short read aligner, 
+  # and it does not need to be sorted (the pipeline will split + sort things for you). 
+  # Our ce11_example_single_end.bam is a downsampled BAM file containing the first 10,000 lines (9,983 reads) of a real sample.
+  input_bam:
+    class: File
+    path: ce11_example_single_end.bam
+
+  # This describes the reference genome in FASTA format (used in the mpileup step), 
+  # which specifies the reference for which variant reads are compared against. 
+  # The included reference is the first chromosome of a ce11 assembly.
+  reference:
+    class: File
+    path: ce11.chrI.fa
+
+  # This file contains a list of known SNPs which will be filtered from the list of candidate editing sites. 
+  # The example file contains just one SNP in BED3 format (0-based, half-open), 
+  # which can be used to remove sites that we know aren't editing sites, but are known SNPs.
+  known_snp:
+    class: File
+    path: ce11_known_SNPs.bed
+
+Template and example:
+
+   If you ansered  y when asked, a set of example files has been created in the current directory.
+
+   You can run that example this way:
+      ./sailor-1.0.4 c11_example.yaml
+
+   Or you can use the the c11_example.yaml file as a starting point template template to create your own parameter file
+
+   - rename that file:
+        cp c11_example.yaml my_data.yaml
+
+   - edit the values to reflect your data,
+        indicate three required arguments as listed above
+
+   - run it with sailor-1.0.4
+         ./sailor-1.0.4 my_data.yaml
+

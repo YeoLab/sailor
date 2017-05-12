@@ -1,0 +1,47 @@
+#!/bin/bash
+
+
+# the cwl workflow to run
+SAILOR_WORKFLOW=/opt/sailor/cwl/rnaediting2strands.workflow.cwl
+
+
+# get the job filepath
+JOB_FILE=$1
+
+# get the job.yaml full directory name
+JOB_HOME="$( cd "$( dirname "${BASH_SOURCE[1]}" )" && pwd )"
+
+# get the job.yaml file name without extension
+JOB_BASENAME=${JOB_FILE##*/}
+JOB_NAME="${JOB_BASENAME%.*}"
+
+# create temporary intermediates directory for cwltool
+INTERM=${JOB_HOME}/${JOB_NAME}/.tmp/interm
+mkdir -p ${INTERM}
+
+# create outdir directory
+OUTDIR=${JOB_HOME}/${JOB_NAME}/.tmp/outdir
+mkdir -p ${OUTDIR}
+
+
+JOBCOPYFILEPATH="${JOB_HOME}/${JOB_NAME}/SAILOR-JOB-COPY.${JOB_NAME}.txt"
+cp ${JOB_FILE} ${JOBCOPYFILEPATH}
+chmod -x ${JOBCOPYFILEPATH}
+touch "${JOB_HOME}/${JOB_NAME}/SAILOR-VERSION.1.0.4" 
+
+
+#cwltool --debug \
+cwltool \
+  --outdir ${OUTDIR} \
+  --cachedir ${INTERM} \
+  ${SAILOR_WORKFLOW} \
+  ${JOB_FILE} \
+  2>&1 | tee ${JOB_HOME}/${JOB_NAME}/SAILOR-JOB-LOG.txt
+
+
+# copy final results to results folder
+mkdir -p ${JOB_HOME}/${JOB_NAME}/results
+cp ${OUTDIR}/*  ${JOB_HOME}/${JOB_NAME}/results/
+
+
+
