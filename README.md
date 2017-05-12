@@ -11,28 +11,20 @@ of these filtering criteria and/or pursue analysis of A-to-I editing sites with 
 
 # Installation:
 
-[Install Singularity](http://singularity.lbl.gov/)
+[Install singularity](http://singularity.lbl.gov/)
 
-[Download Executable](https://s3-us-west-1.amazonaws.com/rnaediting-0.0.2/rnaediting-0.0.2.img)
+[Download executable into an empty directory](https://s3-us-west-1.amazonaws.com/sailor-1.0.4/sailor-1.0.4)
 
 That's it!
 
-### (Optional) Download Small Example Files:
-[Example Single-end BAM](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/example_data/example.single_end.bam)
-
-[Example Reference (in FASTA format)](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/example_data/ce11.chrI.fa)
-
-[Example Known SNPs (in BED3 format)](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/example_data/knownSNPs.bed)
-
-
-### Download YAML files that describe experiment parameters:
-[Example YAML (for single-end BAMs)](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/jobs/example-se.yml)
-
-##### Equivalent paired-end (hg19) example YAML files can be found [here](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/jobs/), corresponding to example data [here](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/example_data/)
+### (optional) Obtain small example files already packaged, just type:
+```
+sailor-1.0.4
+```
 
 # Running the Pipeline:
 ```
-sailor-1.0.4.img example-se.yml
+sailor-1.0.4 ce11_example.yaml
 ```
 
 ### Running the data with required arguments:
@@ -41,29 +33,32 @@ The pipeline only requires 3 arguments: The BAM file, the reference genome, and 
 
 Running time takes a few hours for C elegans data, so sit back and relax by reading the rest of this README.
 
-These are the minimum required arguments needed to run the pipeline (you can see the same information inside the example-se_minimal.yml file.):
+These are the minimum required arguments needed to run the pipeline (you can see the same information inside the example.yml file):
 
 
-This is a BAM file of your reads aligned to the genome. You can generate this file using any short read aligner, and it does not need to be sorted (the pipeline will split + sort things for you). Our example.bam is a downsampled BAM file containing the first 10,000 lines (9,983 reads) of a real sample:
+This is a BAM file ([Example](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/example_data/example.single_end.bam)) of your reads aligned to the genome. You can generate this file using any short read aligner, and it does not need to be sorted (the pipeline will split + sort things for you). Our example.bam is a downsampled BAM file containing the first 10,000 lines (9,983 reads) of a real sample:
 ```YAML
 input_bam:
   class: File
-  path: example.bam
+  path: ce11_example_single_end.bam
 ```
 
-This describes the reference genome in FASTA format (used in the mpileup step), which specifies the reference for which variant reads are compared against. The included reference is the first chromosome of a ce11 assembly:
+
+This describes the reference genome in FASTA format ([Example](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/example_data/ce11.chrI.fa)) (used in the mpileup step), which specifies the reference for which variant reads are compared against. The included reference is the first chromosome of a ce11 assembly:
 ```YAML
 reference:
   class: File
   path: ce11.chrI.fa
 ```
 
-This file contains a list of known SNPs which will be filtered from the list of candidate editing sites. The example file contains just one SNP in BED3 format (0-based, half-open), which can be used to remove sites that we know aren't editing sites, but are known SNPs:
+
+This file contains a list of known SNPs ([Example](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/example_data/knownSNPs.bed)) which will be filtered from the list of candidate editing sites. The example file contains just one SNP in BED3 format (0-based, half-open), which can be used to remove sites that we know aren't editing sites, but are known SNPs:
 ```YAML
 known_snp:
   class: File
-  path: knownSNPs.bed
+  path: ce11_known_SNPs.bed
 ```
+
 
 ### Running the data with optional arguments:
 
