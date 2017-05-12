@@ -5,6 +5,34 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+
+## [1.0.4] - 5-12-2017
+### Added
+- added ...
+
+### Changed
+- changed ...
+
+### Removed
+- removed ...
+
+### Fixed
+- fixed paths in README
+
+## [0.0.3DEV] - 5-4-2017
+### Added
+- BED file outputs to replace conf file as the final output
+
+### Changed
+- changed the 'reverse-strand' flag in filter_variants.py to '--reverse-split'. --reverse-split is true if the pipeline deals with '*.rev.bam' files generated from step1.
+
+### Removed
+- removed reverse-strand flags for filter_variants.py : we now get strand information based on how the mapped reads were split in the beginning of the workflow.
+
+### Fixed
+- changing the reverse flag in filter_variants now fixes instances where A-G changes were being called falsely on Paired End reads mapped to the reverse gene.
+
+
 ## [0.0.3DEV] - 5-9-2017
 ### Added
 - example yaml files for PE and SE

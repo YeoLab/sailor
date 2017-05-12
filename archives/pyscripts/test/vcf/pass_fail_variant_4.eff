@@ -1,3 +1,0 @@
-# Tests the strand filter (if forward stranded, then the forward allele and reverse allele should be A->G
-#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	baz
-chrI	4295	10	T	C	0.1	PASS_IF_REV	DP=10;DPR=30,1;SGB=-0.379885;RPB=1;MQB=1;BQB=1;MQ0F=0;AF1=0;AC1=0;DP4=9,0,1,0;MQ=20;FQ=-107.526;PV4=1,6.0615e-05,1,1	GT:PL:DP:DV:SP:DP4:DPR	0/0:0,73,81:31:1:0:30,0,1,0:30,1

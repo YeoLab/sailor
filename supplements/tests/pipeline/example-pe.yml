@@ -1,0 +1,48 @@
+# aligned BAM file
+input_bam:
+  class: File
+  path: ../example_data/example.paired_end.chr21.bam
+
+# reference file
+reference:
+  class: File
+  path: ../example_data/hg19.chr21.fa
+
+# known snps file
+known_snp:
+  class: File
+  path: ../example_data/hg19_knownSNPs.bed
+
+# if this is a TruSeq reverse stranded library, set to true
+reverse_stranded_library: true
+
+# determines whether or not this is a single or paired-end library
+single_end: false
+
+# determines the minimal number of nt a read can overhang a junction
+junction_overhang: 10
+
+# determines the distance from the end of the read that a mutation can occur
+edge_mutation: 5
+
+# the maximum number of non-AG mutations that can occur in a read before it's filtered out.
+non_ag: 1
+
+# minimum read coverage supporting a variant at any position
+min_variant_coverage: 5
+
+# choose "DP" to calculate minimum coverage based on all postfiltered reads,
+# or "DP4" to calculate coverage based on postfiltered+quality filtered reads.
+# See: http://samtools.sourceforge.net/mpileup.shtml for differences between DP and DP4
+dp: DP4
+
+# Adjust these parameters to either add a pseudocount to G (alpha) or A (beta).
+# Useful for relaxing parameters on lower coverage data.
+alpha: 0
+beta: 0
+
+# hard filter on minimum edit fraction
+edit_fraction: 0.01
+
+# keep all (100%) edited sites as true editing events.
+keep_all_edited: true

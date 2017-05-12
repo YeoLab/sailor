@@ -1,5 +1,0 @@
-#!/usr/bin/env split_strands.cwl
-
-input_bam:
-  class: File
-  path: /projects/ps-yeolab3/bay001/hundley_rnae_20160210/analysis/rnae_v6/WT.bam

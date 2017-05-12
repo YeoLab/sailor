@@ -1,9 +1,0 @@
-#!/usr/bin/env mpileup.cwl
-
-input_bam:
-  class: File
-  path: ../example_data/example.sorted.rmdup.readfiltered.bam
-
-reference:
-  class: File
-  path: ../example_data/ce11.chrI.fa

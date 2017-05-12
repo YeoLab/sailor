@@ -1,5 +1,0 @@
-#!/usr/bin/env filter_variants.cwl
-
-input_vcf:
-  class: File
-  path: ../example_data/example.sorted.rmdup.readfiltered.vcf
