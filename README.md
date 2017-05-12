@@ -17,23 +17,26 @@ of these filtering criteria and/or pursue analysis of A-to-I editing sites with 
 
 That's it!
 
-### (optional) Obtain small example files already packaged, just type:
+# Running the Pipeline:
+
+To obtain small example files (bundled with the executable), just type:
 ```
-sailor-1.0.4
+./sailor-1.0.4
+...
+Do you want me to copy now into your current directory an example of data input files and a job template (y/-):y
 ```
 
-# Running the Pipeline:
+Execute the analysis using the provided example YAML file pointing to the appropriate bundled example files
 ```
-sailor-1.0.4 ce11_example.yaml
+./sailor-1.0.4 ce11_example.yaml
 ```
 
 ### Running the data with required arguments:
 
-The pipeline only requires 3 arguments: The BAM file, the reference genome, and a list of known SNPs to filter out. Here is the full list and explanation of optional arguments you can provide as needed in the job file:
+Running time for the examples should be quick! Running on a complete dataset takes a few hours for C elegans data, 
+so sit back and relax by reading the rest of this README.
 
-Running time for the examples should be quick! Running on a complete dataset takes a few hours for C elegans data, so sit back and relax by reading the rest of this README.
-
-These are the minimum required arguments needed to run the pipeline (you can see the same information inside the example.yml file):
+These are the minimum required arguments needed to run the pipeline (you can view the same information inside the example.yml file):
 
 
 This is a BAM file ([Example](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/example_data/example.single_end.bam)) of your reads aligned to the genome. You can generate this file using any short read aligner, and it does not need to be sorted (the pipeline will split + sort things for you). Our example.bam is a downsampled BAM file containing the first 10,000 lines (9,983 reads) of a real sample:
@@ -62,9 +65,10 @@ known_snp:
 
 ### Running the data with optional arguments:
 
-If you find that using default parameters is not fit to your data, you may want to play around with the optional arguments. You can find example YAML configuaration files [here](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/jobs).
-
-Here is a description of some optional arguments and their defaults:
+The pipeline only requires 3 arguments: The BAM file, the reference genome, and a list of known SNPs to filter out. 
+If you find that using default parameters are not fit to your data, you may want to play around with the optional arguments. 
+Here is the full list and explanation of optional arguments you can provide as needed in the job file 
+(You can find example YAML configuaration files [here](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/jobs)):
 
 This parameter [true] or false specifies whether or not we're dealing with a reversely stranded library:
 ```YAML
