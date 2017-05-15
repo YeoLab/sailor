@@ -3,7 +3,7 @@
 # Software for Accurately Identifying Locations Of RNA-editing (SAILOR)
 
 SAILOR implements published methodologies to assess adenosine to inosine changes in RNA-SEQ data for easy identification of transcriptome-wide editing. 
-The SAILOR pipeline is available as both a CWL workflow and as a Singularity image and is designed for ease of use to run with one command. 
+The SAILOR pipeline is available as both a [CWL workflow](http://www.commonwl.org) and as a [Singularity container](http://singularity.lbl.gov) and is designed for ease of use to run with one command. 
 It requires a [BAM](https://genome.ucsc.edu/FAQ/FAQformat.html#format5.1)-formatted file of the sequence alignments, a [FASTA](http://genetics.bwh.harvard.edu/pph/FASTA.html)-formatted reference genome sequence (of any organism or cell-type), 
 and a [BED3](https://genome.ucsc.edu/FAQ/FAQformat.html#format1)-formatted file of known SNPs. SAILOR allows the user to specify a range of filtering criteria including: Non A-to-I mismatch rate, 
 location of mismatches (to account for biases at the end of reads), and a minimum read coverage required to call variants. Users may relax any 
@@ -11,7 +11,7 @@ of these filtering criteria and/or pursue analysis of A-to-I editing sites with 
 
 # Installation:
 
-[Install singularity](http://singularity.lbl.gov/)
+[Install singularity](http://singularity.lbl.gov/install-linux)
 
 [Download executable into an empty directory](https://s3-us-west-1.amazonaws.com/sailor-1.0.4/sailor-1.0.4)
 
@@ -47,7 +47,7 @@ so sit back and relax by reading the rest of this README.
 These are the minimum required arguments needed to run the pipeline (you can view the same information inside the example.yml file):
 
 
-This is a BAM file ([Example](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/example_data/example.single_end.bam)) of your reads aligned to the genome. You can generate this file using any short read aligner, and it does not need to be sorted (the pipeline will split + sort things for you). Our example.bam is a downsampled BAM file containing the first 10,000 lines (9,983 reads) of a real sample:
+This is a BAM file ([Example](https://github.com/YeoLab/sailor/blob/master/CWL-SINGULARITY-pipeline-building-code/example/ce11_example_single_end.bam)) of your reads aligned to the genome. You can generate this file using any short read aligner, and it does not need to be sorted (the pipeline will split + sort things for you). Our example.bam is a downsampled BAM file containing the first 10,000 lines (9,983 reads) of a real sample:
 ```YAML
 input_bam:
   class: File
@@ -55,7 +55,7 @@ input_bam:
 ```
 
 
-This describes the reference genome in FASTA format ([Example](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/example_data/ce11.chrI.fa)) (used in the mpileup step), which specifies the reference for which variant reads are compared against. The included reference is the first chromosome of a ce11 assembly:
+This describes the reference genome in FASTA format ([Example](https://github.com/YeoLab/sailor/blob/master/CWL-SINGULARITY-pipeline-building-code/example/ce11.chrI.fa)) (used in the mpileup step), which specifies the reference for which variant reads are compared against. The included reference is the first chromosome of a ce11 assembly:
 ```YAML
 reference:
   class: File
@@ -63,7 +63,7 @@ reference:
 ```
 
 
-This file contains a list of known SNPs ([Example](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/example_data/knownSNPs.bed)) which will be filtered from the list of candidate editing sites. The example file contains just one SNP in BED3 format (0-based, half-open), which can be used to remove sites that we know aren't editing sites, but are known SNPs:
+This file contains a list of known SNPs ([Example](https://github.com/YeoLab/sailor/blob/master/CWL-SINGULARITY-pipeline-building-code/example/ce11_known_SNPs.bed)) which will be filtered from the list of candidate editing sites. The example file contains just one SNP in BED3 format (0-based, half-open), which can be used to remove sites that we know aren't editing sites, but are known SNPs:
 ```YAML
 known_snp:
   class: File
@@ -76,7 +76,7 @@ known_snp:
 The pipeline only requires 3 arguments: The BAM file, the reference genome, and a list of known SNPs to filter out. 
 If you find that using default parameters are not fit to your data, you may want to play around with the optional arguments. 
 Here is the full list and explanation of optional arguments you can provide as needed in the job file 
-(You can find example YAML configuaration files [here](https://github.com/YeoLab/rna_editing_pipeline/tree/master/RNA_editing_pipeline/singularity-dev/jobs)):
+(You can find an example YAML configuaration file [here](https://github.com/YeoLab/sailor/blob/master/CWL-SINGULARITY-pipeline-building-code/example/ce11_example.yaml)):
 
 This parameter [true] or false specifies whether or not we're dealing with a reversely stranded library:
 ```YAML
