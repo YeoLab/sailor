@@ -47,7 +47,7 @@ so sit back and relax by reading the rest of this README.
 These are the minimum required arguments needed to run the pipeline (you can view the same information inside the example.yml file):
 
 
-This is a BAM file ([Example](https://github.com/YeoLab/sailor/blob/master/CWL-SINGULARITY-pipeline-building-code/example/ce11_example_single_end.bam)) of your reads aligned to the genome. You can generate this file using any short read aligner, and it does not need to be sorted (the pipeline will split + sort things for you). Our example.bam is a downsampled BAM file containing the first 10,000 lines (9,983 reads) of a real sample:
+This is a BAM file ([Example](https://github.com/YeoLab/sailor/blob/master/CWL-SINGULARITY-pipeline-building-code/example/ce11_example_single_end.bam)) of your reads aligned to the genome. You can generate this file using any short read aligner, and it does not need to be sorted (the pipeline will split + sort things for you). **Note: You should check whether your aligner provides the MD tag, as this is necessary to determine the non A/G mismatches between the reference and query.** Our example.bam is a downsampled BAM file containing the first 10,000 lines (9,983 reads) of a real sample:
 ```YAML
 input_bam:
   class: File
