@@ -30,7 +30,19 @@ inputs:
     inputBinding:
       position: 4
       prefix: --reverse-split
-
+  ct:
+    type: boolean
+    default: false
+    inputBinding:
+      position: 5
+      prefix: --ct
+  gt:
+    type: boolean
+    default: false
+    inputBinding:
+      position: 5
+      prefix: --gt
+      
 arguments: [
   "-o",
   $(inputs.input_vcf.nameroot).varfiltered.vcf

@@ -193,9 +193,67 @@ def non_ag_mismatches(read_seq, md, sense):
     return non_ag_mm_counts
 
 
+def non_ct_mismatches(read_seq, md, sense):
+    """
+    Given a read sequence, MD tag, and 'sense' (look for CT if sense,
+    look for GA if antisense), return the number of non-CT/GA mismatches
+    seen in the read.
+
+    :param read_seq: string
+    :param md: string
+    :param sense: boolean
+    :return nonAG: int
+    """
+    mismatches_regex = ur"(\d+)([ATCG])"
+    mismatches = re.findall(mismatches_regex,md)
+    non_ct_mm_counts = 0
+    if mismatches:
+        read_pos = 0
+        for mismatch in mismatches:
+            ref_allele = mismatch[1]
+            read_pos += int(mismatch[0])
+
+            read_allele = read_seq[read_pos]
+            if(not((ref_allele == 'C' and read_allele == 'T' and sense == True) or
+                   (ref_allele == 'G' and read_allele == 'A' and sense == False))):
+                non_ct_mm_counts += 1
+            read_pos += 1
+
+    return non_ct_mm_counts
+
+
+def non_gt_mismatches(read_seq, md, sense):
+    """
+    Given a read sequence, MD tag, and 'sense' (look for GT if sense,
+    look for CA if antisense), return the number of non-GT/CA mismatches
+    seen in the read.
+
+    :param read_seq: string
+    :param md: string
+    :param sense: boolean
+    :return nonAG: int
+    """
+    mismatches_regex = ur"(\d+)([ATCG])"
+    mismatches = re.findall(mismatches_regex,md)
+    non_gt_mm_counts = 0
+    if mismatches:
+        read_pos = 0
+        for mismatch in mismatches:
+            ref_allele = mismatch[1]
+            read_pos += int(mismatch[0])
+
+            read_allele = read_seq[read_pos]
+            if(not((ref_allele == 'G' and read_allele == 'T' and sense == True) or
+                   (ref_allele == 'C' and read_allele == 'A' and sense == False))):
+                non_gt_mm_counts += 1
+            read_pos += 1
+
+    return non_gt_mm_counts
+
+
 def filter_reads(
         input_bam, output_bam, min_overhang, min_underhang,
-        non_ag_mm_threshold, reverse_stranded=True,
+        non_ag_mm_threshold, reverse_stranded=True, ct=False, gt=False
 ):
     """
     # Step 3: filter reads
@@ -314,9 +372,18 @@ def filter_reads(
             #     read. Otherwise, allow up to the maximum allowable non-AG
             #     mismatches before tossing. Default: 1 mm
             """
-            if non_ag_mismatches(read_seq, mm, sense) > non_ag_mm_threshold:
-                flags['non_ag_exceeded'].append(read_name)
-                flag = 7
+            if ct:
+                if non_ct_mismatches(read_seq, mm, sense) > non_ag_mm_threshold:
+                    flags['non_ct_exceeded'].append(read_name)
+                    flag = 7
+            elif gt:
+                if non_gt_mismatches(read_seq, mm, sense) > non_ag_mm_threshold:
+                    flags['non_gt_exceeded'].append(read_name)
+                    flag = 7
+            else:
+                if non_ag_mismatches(read_seq, mm, sense) > non_ag_mm_threshold:
+                    flags['non_ag_exceeded'].append(read_name)
+                    flag = 7
 
             if flag == 1:
                 o.write(read)
@@ -406,7 +473,7 @@ USAGE
         parser.add_argument(
             "-ag", "--non_ag_threshold",
             dest="non_ag_mm_threshold",
-            help="allow up to [n] non-AG mutations in a read before tossing."
+            help="allow up to [n] non-AG (or non-CT if --ct) mutations in a read before tossing."
                  " Default: 1",
             required=False,
             type=int,
@@ -428,6 +495,22 @@ USAGE
             required=False,
             default=False
         )
+        parser.add_argument(
+            "--ct",
+            dest="ct",
+            help="Look for c/t edits instead of a/g",
+            action='store_true',
+            required=False,
+            default=False
+        )
+        parser.add_argument(
+            "--gt",
+            dest="gt",
+            help="Look for g/t edits instead of a/g",
+            action='store_true',
+            required=False,
+            default=False
+        )
         # Process arguments
 
         args = parser.parse_args()
@@ -438,14 +521,18 @@ USAGE
         non_ag_mm_threshold = args.non_ag_mm_threshold
         save_filtered = args.save_filtered
         is_reverse = args.reverse_strand
-
+        ct = args.ct
+        gt = args.gt
+        
         flags = filter_reads(
             input_bam,
             output_bam,
             min_overhang,
             min_underhang,
             non_ag_mm_threshold,
-            is_reverse
+            is_reverse,
+            ct,
+            gt
         )
         if save_filtered:
             print('saving filtered readnames to file...')

@@ -46,25 +46,52 @@ class CLIError(Exception):
         return self.msg
 
 
-def as_bed(line):
+def as_bed(line, ct, gt):
     """
     Returns the BED6-formatted line representation of the CONF file.
     :param line:
     :return:
     """
     line = line.split('\t')
-    if line[3] == 'T' and line[4] == 'C':
-        strand = '-'
-    elif line[3] == 'A' and line[4] == 'G':
-        strand = '+'
-    else:
-        print('WARNING: multiallelic SNV found')
-        if line[3] == 'A':
-            strand = '+'
-        elif line[3] == 'T':
+    if ct:
+        if line[3] == 'G' and line[4] == 'A':
             strand = '-'
+        elif line[3] == 'C' and line[4] == 'T':
+            strand = '+'
         else:
-            strand = '0'
+            print('WARNING: multiallelic SNV found')
+            if line[3] == 'C':
+                strand = '+'
+            elif line[3] == 'G':
+                strand = '-'
+            else:
+                strand = '0'
+    elif gt:
+        if line[3] == 'C' and line[4] == 'A':
+            strand = '-'
+        elif line[3] == 'G' and line[4] == 'T':
+            strand = '+'
+        else:
+            print('WARNING: multiallelic SNV found')
+            if line[3] == 'G':
+                strand = '+'
+            elif line[3] == 'C':
+                strand = '-'
+            else:
+                strand = '0'
+    else:
+        if line[3] == 'T' and line[4] == 'C':
+            strand = '-'
+        elif line[3] == 'A' and line[4] == 'G':
+            strand = '+'
+        else:
+            print('WARNING: multiallelic SNV found')
+            if line[3] == 'A':
+                strand = '+'
+            elif line[3] == 'T':
+                strand = '-'
+            else:
+                strand = '0'
     bed_name = '{}|{}>{}|{}'.format(
         line[2], line[3], line[4], line[6]
     )
@@ -157,7 +184,7 @@ def process(alfa, beta, cov_margin, keep_all_edited, line):
     return return_string
 
 
-def rank_edits(alfa, beta, cov_margin, keep_all_edited, eff_file, outfile):
+def rank_edits(alfa, beta, cov_margin, keep_all_edited, eff_file, outfile, ct=False, gt=False):
     """
     Step 8: Score editing sites based on coverage and edit %
 
@@ -201,7 +228,7 @@ def rank_edits(alfa, beta, cov_margin, keep_all_edited, eff_file, outfile):
                 to_string = process(
                     alfa, beta, cov_margin, keep_all_edited, eff
                 )
-                ob.write(as_bed(to_string))
+                ob.write(as_bed(to_string, ct, gt))
                 # ov.write(as_vcf(to_string))
                 o.write(to_string)
     o.close()
@@ -296,6 +323,22 @@ USAGE
         default=False,
         action='store_true'
     )
+    parser.add_argument(
+        "--ct",
+        dest="ct",
+        help="Look for c/t edits instead of a/g",
+        action='store_true',
+        required=False,
+        default=False
+    )
+    parser.add_argument(
+        "--gt",
+        dest="gt",
+        help="Look for g/t edits instead of a/g",
+        action='store_true',
+        required=False,
+        default=False
+    )
     # Process arguments
     args = parser.parse_args()
     input_eff = args.input_eff
@@ -304,10 +347,11 @@ USAGE
     alpha = args.alpha
     beta = args.beta
     keep_all_edited = args.keep100
-
+    ct = args.ct
+    gt = args.gt
     #
 
-    rank_edits(alpha, beta, cov_margin, keep_all_edited, input_eff, outfile)
+    rank_edits(alpha, beta, cov_margin, keep_all_edited, input_eff, outfile, ct, gt)
     return 0
 
 

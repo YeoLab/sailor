@@ -72,7 +72,16 @@ inputs:
   skip_duplicate_removal:
     type: boolean
     default: false
-
+  
+  ct:
+    type: boolean
+    default: false
+    
+  gt:
+    type: boolean
+    default: false
+    
+    
 outputs:
 
 
@@ -147,6 +156,8 @@ steps:
       edge_mutation: edge_mutation
       non_ag: non_ag
       reverse_stranded_library: reverse_stranded_library
+      ct: ct
+      gt: gt
     out: [output_bam]
 
   mpileup:
@@ -175,6 +186,8 @@ steps:
       min_variant_coverage: min_variant_coverage
       dp: dp
       reverse_split_bam: reverse_split_bam
+      ct: ct
+      gt: gt
     out: [output_vcf]
 
   filter_known_snp:
@@ -192,6 +205,8 @@ steps:
       alpha: alpha
       beta: beta
       keep_all_edited: keep_all_edited
-
+      ct: ct
+      gt: gt
+      
     # out: [output_conf, output_bed, output_vcf]
     out: [output_conf, output_bed]

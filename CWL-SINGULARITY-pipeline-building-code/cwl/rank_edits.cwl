@@ -38,7 +38,19 @@ inputs:
     inputBinding:
       position: 5
       prefix: --keep-100-edited
-
+  ct:
+    type: boolean
+    default: false
+    inputBinding:
+      position: 6
+      prefix: --ct
+  gt:
+    type: boolean
+    default: false
+    inputBinding:
+      position: 6
+      prefix: --gt
+  
 arguments: [
   "--output",
   $(inputs.input_noSNP.nameroot).ranked.conf

@@ -38,11 +38,23 @@ inputs:
     inputBinding:
       position: 5
       prefix: --reverse-strand
-
+  ct:
+    type: boolean
+    default: false
+    inputBinding:
+      position: 6
+      prefix: --ct
+  gt:
+    type: boolean
+    default: false
+    inputBinding:
+      position: 6
+      prefix: --gt
+      
 arguments: [
   "--output",
   $(inputs.input_unfiltered_bam.nameroot).readfiltered.bam
-  ]
+]
 
 outputs:
 

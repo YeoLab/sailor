@@ -63,7 +63,14 @@ inputs:
   keep_all_edited:
     type: boolean
     default: false
-
+  
+  ct:
+    type: boolean
+    default: false
+  gt:
+    type: boolean
+    default: false
+    
 ### These shouldn't change at all. I just need to ensure ###
 ### the forward/reverse flags are explicitly set ###
 
@@ -198,6 +205,8 @@ steps:
       edit_fraction: edit_fraction
       keep_all_edited: keep_all_edited
       skip_duplicate_removal: skip_duplicate_removal
+      ct: ct
+      gt: gt
     out:
       # [sorted_bam_output, rmdup_bam_output, filtered_bam_output, mpileup_output, call_snvs_output, format_variants_output, filter_variants_output, filter_known_snp_output, rank_edits_output, rank_edits_output_vcf, rank_edits_output_bed]
       [sorted_bam_output, rmdup_bam_output, filtered_bam_output, mpileup_output, call_snvs_output, format_variants_output, filter_variants_output, filter_known_snp_output, rank_edits_output, rank_edits_output_bed]
@@ -221,6 +230,8 @@ steps:
       edit_fraction: edit_fraction
       keep_all_edited: keep_all_edited
       skip_duplicate_removal: skip_duplicate_removal
+      ct: ct
+      gt: gt
     out:
       # [sorted_bam_output, rmdup_bam_output, filtered_bam_output, mpileup_output, call_snvs_output, format_variants_output, filter_variants_output, filter_known_snp_output, rank_edits_output, rank_edits_output_vcf, rank_edits_output_bed]
       [sorted_bam_output, rmdup_bam_output, filtered_bam_output, mpileup_output, call_snvs_output, format_variants_output, filter_variants_output, filter_known_snp_output, rank_edits_output, rank_edits_output_bed]

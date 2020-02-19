@@ -73,24 +73,40 @@ def pass_min_coverage(dp, i, min_coverage, cov_metric):
     return True
 
 
-def pass_editing_site_phenotype(ref, alt, sense):
+def pass_editing_site_phenotype(ref, alt, sense, ct, gt):
     """
     Returns True if it looks like an editing site (A-G or T-C antisense).
 
     :param ref: string
     :param alt: string
     :param sense: boolean
+    :param ct: boolean
     :return passed: boolean
         True if it looks like an editing site
     """
 
     # handle multiallelic callers if necessary (not perfect)
-    if ((ref == 'A' and alt.find('G') == -1) or
-        (ref == 'T' and alt.find('C') == -1)):
-        return False
+    if ct:
+        if ((ref == 'C' and alt.find('T') == -1) or
+            (ref == 'G' and alt.find('A') == -1)):
+            return False
+    elif gt:
+        if ((ref == 'G' and alt.find('T') == -1) or
+            (ref == 'C' and alt.find('A') == -1)):
+    else:
+        if ((ref == 'A' and alt.find('G') == -1) or
+            (ref == 'T' and alt.find('C') == -1)):
+            return False
     # sense variants must have A as ref, antisense must have T
-    if (sense and ref != 'A') or (not sense and ref != 'T'):
-        return False
+    if ct:
+        if (sense and ref != 'C') or (not sense and ref != 'G'):
+            return False
+    elif gt:
+        if (sense and ref != 'G') or (not sense and ref != 'C'):
+            return False
+    else:
+        if (sense and ref != 'A') or (not sense and ref != 'T'):
+            return False
     return True
 
 
@@ -109,7 +125,7 @@ def get_dp_and_i(info):
     return dp, i
 
 
-def split_i_and_get_allele(i, reverse_split):
+def split_i_and_get_allele(i, reverse_split, unstranded=False):
     """
     Splits i and returns the ref and alt numbers.
 
@@ -171,7 +187,7 @@ def split_i_and_get_allele(i, reverse_split):
 
 
 def vcf2eff(input_vcf, output_eff, min_coverage, cov_metric='DP4',
-            reverse_stranded=True):
+            reverse_stranded=True, ct=False, gt=False, unstranded=False):
     """
     Step 6: Filter variants for coverage and editing-specific AG/TC changes.
 
@@ -238,7 +254,7 @@ def vcf2eff(input_vcf, output_eff, min_coverage, cov_metric='DP4',
                     # 6) if not A-G or T-C, then pass
 
                     """
-                    if not pass_editing_site_phenotype(ref, alt, sense):
+                    if not pass_editing_site_phenotype(ref, alt, sense, ct, gt):
                         flag = 3
                         flags['not_editing'].append('{}:{}'.format(chrom, pos))
                     """
@@ -328,7 +344,7 @@ USAGE
         parser.add_argument(
             "-s", "--save-filtered",
             dest="save_filtered",
-            help="save filtered readsnames",
+            help="save filtered read names",
             required=False,
             action='store_true'
         )
@@ -340,17 +356,43 @@ USAGE
             required=False,
             default=False
         )
+        parser.add_argument(
+            "--unstranded",
+            dest="unstranded",
+            help="if the library is unstranded, infer strand position based on number of reads on each strand. Overrides --reverse-split",
+            action='store_true',
+            required=False,
+            default=False
+        )
+        parser.add_argument(
+            "--ct",
+            dest="ct",
+            help="Look for c/t edits instead of a/g",
+            action='store_true',
+            required=False,
+            default=False
+        )
+        parser.add_argument(
+            "--gt",
+            dest="gt",
+            help="Look for g/t edits instead of a/g",
+            action='store_true',
+            required=False,
+            default=False
+        )
         # Process arguments
         args = parser.parse_args()
         input_vcf = args.input_vcf
         output_eff = args.output_eff
         save_filtered = args.save_filtered
         dp = args.dp
+        ct = args.ct
+        gt = args.gt
         is_reverse = args.reverse_split
-
+        unstranded = args.unstranded
         min_coverage = args.min_coverage
 
-        flags = vcf2eff(input_vcf, output_eff, min_coverage, dp, is_reverse)
+        flags = vcf2eff(input_vcf, output_eff, min_coverage, dp, is_reverse, ct, gt, unstranded)
         if save_filtered:
             print('saving filtered vars to file...')
             for flag, lst in flags.iteritems():
