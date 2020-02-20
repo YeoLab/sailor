@@ -93,6 +93,7 @@ def pass_editing_site_phenotype(ref, alt, sense, ct, gt):
     elif gt:
         if ((ref == 'G' and alt.find('T') == -1) or
             (ref == 'C' and alt.find('A') == -1)):
+            return False
     else:
         if ((ref == 'A' and alt.find('G') == -1) or
             (ref == 'T' and alt.find('C') == -1)):
