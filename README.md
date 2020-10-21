@@ -228,6 +228,23 @@ example.fwd.sorted.rmdup.readfiltered.formatted.varfiltered.snpfiltered.ranked.c
 11. (GENOTYPE) : vcf "genotype" column
 12. (baz) : vcf "genotype value" column
 
+
+## Other notes.
+
+If using python3.8, you might run into a warning related to buffer size (ie. 
+
+```bash
+subprocess.py:849: RuntimeWarning: line buffering (buffering=1) isn't supported in binary mode, the default buffer size will be used
+```
+
+)
+
+This was identified here and doesn't appear to affect this pipeline.
+
+https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=954388
+
+##
+
 # References:
 
 Washburn, M. C., Kakaradov, B., Sundararaman, B., Wheeler, E., Hoon, S., Yeo, G. W., & Hundley, H. A. (2014): The dsRBP and inactive editor ADR-1 utilizes dsRNA binding to regulate A-to-I RNA editing across the C. elegans transcriptome. 

@@ -147,11 +147,17 @@ steps:
       duped_bam: sort/output_bam
       skip_duplicate_removal: skip_duplicate_removal
     out: [output_bam]
+  
+  index_reads:
+    run: samtools-index.cwl
+    in:
+      alignments: rmdup/output_bam
+    out: [alignments_with_index]
 
   filter_reads:
     run: filter_reads.cwl
     in:
-      input_unfiltered_bam: rmdup/output_bam
+      input_unfiltered_bam: index_reads/alignments_with_index
       junction_overhang: junction_overhang
       edge_mutation: edge_mutation
       non_ag: non_ag

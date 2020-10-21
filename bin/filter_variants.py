@@ -403,7 +403,7 @@ USAGE
         return 0
     except KeyboardInterrupt:
         return 0
-    except Exception, e:
+    except Exception as e:
         if DEBUG or TESTRUN:
             raise e
         indent = len(program_name) * " "

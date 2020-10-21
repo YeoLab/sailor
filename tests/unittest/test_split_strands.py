@@ -6,9 +6,9 @@ import pysam
 from pyscripts import split_strands as ss
 
 def test_split_strands_pe_1():
-    test_bam = 'test/bam/pe_unsplit_1.bam'
-    test_fwd = 'test/bam/pe_split_1_fwd.bam'
-    test_rev = 'test/bam/pe_split_1_rev.bam'
+    test_bam = 'bam/pe_unsplit_1.bam'
+    test_fwd = 'bam/pe_split_1_fwd.bam'
+    test_rev = 'bam/pe_split_1_rev.bam'
     reverse = True
     ss.split_strands(test_bam,test_fwd,test_rev, reverse)
     fwd_handle = pysam.AlignmentFile(test_fwd)
@@ -27,9 +27,9 @@ def test_split_strands_pe_2():
     pass
 
 def test_split_strands_se_1():
-    test_bam = 'test/bam/se_unsplit_1.bam'
-    test_fwd = 'test/bam/se_split_1_fwd.bam'
-    test_rev = 'test/bam/se_split_1_rev.bam'
+    test_bam = 'bam/se_unsplit_1.bam'
+    test_fwd = 'bam/se_split_1_fwd.bam'
+    test_rev = 'bam/se_split_1_rev.bam'
     reverse = True
     ss.split_strands(test_bam,test_fwd,test_rev, reverse)
     fwd_handle = pysam.AlignmentFile(test_fwd)
@@ -42,9 +42,9 @@ def test_split_strands_se_1():
     rev_handle.close()
 
 def test_split_strands_se_2():
-    test_bam = 'test/bam/se_unsplit_2.bam'
-    test_fwd = 'test/bam/se_split_2_fwd.bam'
-    test_rev = 'test/bam/se_split_2_rev.bam'
+    test_bam = 'bam/se_unsplit_2.bam'
+    test_fwd = 'bam/se_split_2_fwd.bam'
+    test_rev = 'bam/se_split_2_rev.bam'
     reverse = False
     ss.split_strands(test_bam,test_fwd,test_rev, reverse)
     fwd_handle = pysam.AlignmentFile(test_fwd)

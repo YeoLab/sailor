@@ -60,10 +60,10 @@ def get_softclip(cigar):
     :return right: int
         number of softclipped reads at the end
     """
-    softclip_regex = ur"(\d+)S"
+    softclip_regex = r"(\d+)S"
     softclip = re.findall(softclip_regex,cigar)
 
-    softclip_right_regex = ur"[\w\d]{1}(\d+)S" # if the softclip comes from the right side
+    softclip_right_regex = r"[\w\d]{1}(\d+)S" # if the softclip comes from the right side
     softclip_right = re.findall(softclip_right_regex,cigar)
 
     left = 0
@@ -131,7 +131,7 @@ def get_single_junction_overhang(cigar):
     :return left: int
     :return right: int
     """
-    cigar_overhang_regex = ur"(\d+)M[\d]+N(\d+)M"
+    cigar_overhang_regex = r"(\d+)M[\d]+N(\d+)M"
 
     overhangs = re.findall(cigar_overhang_regex, cigar)
     if overhangs:
@@ -151,7 +151,7 @@ def is_mismatch_before_n_flank_of_read(md, n):
     :return is_mismatch: boolean
     """
     is_mismatch = False
-    flank_mm_regex = ur"^(\d+).*[ACGT](\d+)$"
+    flank_mm_regex = r"^(\d+).*[ACGT](\d+)$"
     flank_mm = re.findall(flank_mm_regex,md)
     if flank_mm:
         flank_mm = flank_mm[0]
@@ -175,7 +175,7 @@ def non_ag_mismatches(read_seq, md, sense):
     :param sense: boolean
     :return nonAG: int
     """
-    mismatches_regex = ur"(\d+)([ATCG])"
+    mismatches_regex = r"(\d+)([ATCG])"
     mismatches = re.findall(mismatches_regex,md)
     non_ag_mm_counts = 0
     if mismatches:
@@ -204,7 +204,7 @@ def non_ct_mismatches(read_seq, md, sense):
     :param sense: boolean
     :return nonAG: int
     """
-    mismatches_regex = ur"(\d+)([ATCG])"
+    mismatches_regex = r"(\d+)([ATCG])"
     mismatches = re.findall(mismatches_regex,md)
     non_ct_mm_counts = 0
     if mismatches:
@@ -233,7 +233,7 @@ def non_gt_mismatches(read_seq, md, sense):
     :param sense: boolean
     :return nonAG: int
     """
-    mismatches_regex = ur"(\d+)([ATCG])"
+    mismatches_regex = r"(\d+)([ATCG])"
     mismatches = re.findall(mismatches_regex,md)
     non_gt_mm_counts = 0
     if mismatches:
@@ -543,7 +543,7 @@ USAGE
         return 0
     except KeyboardInterrupt:
         return 0
-    except Exception, e:
+    except Exception as e:
         if DEBUG or TESTRUN:
             raise(e)
         indent = len(program_name) * " "

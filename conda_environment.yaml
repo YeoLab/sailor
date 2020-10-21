@@ -1,0 +1,29 @@
+avro-cwl==1.8.4
+CacheControl==0.11.7
+certifi==2020.6.20
+chardet==3.0.4
+cwltool==1.0.20170413194156
+future-nodefix==0.17.0
+idna==2.10
+isodate==0.6.0
+lockfile==0.12.2
+mistune==0.8.4
+numpy @ file:///home/conda/feedstock_root/build_artifacts/numpy_1597938342049/work
+pandas @ file:///home/conda/feedstock_root/build_artifacts/pandas_1599600959724/work
+pybedtools==0.8.1
+pyparsing==2.4.7
+pysam==0.16.0.1
+python-dateutil==2.8.1
+pytz==2020.1
+rdflib==4.2.2
+rdflib-jsonld==0.4.0
+requests==2.24.0
+ruamel.yaml==0.16.12
+ruamel.yaml.clib==0.2.2
+schema-salad==2.7.20181126142424
+scipy @ file:///home/conda/feedstock_root/build_artifacts/scipy_1595583577416/work
+shellescape==3.4.1
+six @ file:///home/conda/feedstock_root/build_artifacts/six_1590081179328/work
+typing==3.5.3.0
+typing-extensions==3.7.4.3
+urllib3==1.25.10

@@ -130,7 +130,7 @@ def process(alfa, beta, cov_margin, keep_all_edited, line):
      filter, info, format, cond) = line.split("\t")[:10]
 
     if chr[0] == "#":
-        print line,
+        print(line),
         return
 
     # retrieve total number of reads mapping to position

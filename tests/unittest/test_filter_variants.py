@@ -107,33 +107,33 @@ def test_pass_editing_site_phenotype_1():
     ref = 'A'
     alt = 'G'
     sense = True
-    assert fv.pass_editing_site_phenotype(ref, alt, sense) == True
+    assert fv.pass_editing_site_phenotype(ref, alt, sense, ct=False, gt=False) == True
 
 def test_pass_editing_site_phenotype_2():
     ref = 'T'
     alt = 'C'
     sense = False
-    assert fv.pass_editing_site_phenotype(ref, alt, sense) == True
+    assert fv.pass_editing_site_phenotype(ref, alt, sense, ct=False, gt=False) == True
 
 def test_pass_editing_site_phenotype_3():
     ref = 'A'
     alt = 'G'
     sense = False
-    assert fv.pass_editing_site_phenotype(ref, alt, sense) == False
+    assert fv.pass_editing_site_phenotype(ref, alt, sense, ct=False, gt=False) == False
 
 def test_pass_editing_site_phenotype_4():
     ref = 'T'
     alt = 'C'
     sense = True
-    assert fv.pass_editing_site_phenotype(ref, alt, sense) == False
+    assert fv.pass_editing_site_phenotype(ref, alt, sense, ct=False, gt=False) == False
 
 def test_pass_fail_variant_1():
     """
     Tests the DP4 flag filter
     :return:
     """
-    vcf_file = 'test/vcf/pass_fail_variant_1.vcf'
-    output_eff = 'test/vcf/pass_fail_variant_1.eff'
+    vcf_file = 'vcf/pass_fail_variant_1.vcf'
+    output_eff = 'vcf/pass_fail_variant_1.eff'
     min_coverage = 5
     cov_metric = 'DP4'
     reverse_split = False
@@ -146,8 +146,8 @@ def test_pass_fail_variant_2():
     Tests the DP flag filter
     :return:
     """
-    vcf_file = 'test/vcf/pass_fail_variant_2.vcf'
-    output_eff = 'test/vcf/pass_fail_variant_2.eff'
+    vcf_file = 'vcf/pass_fail_variant_2.vcf'
+    output_eff = 'vcf/pass_fail_variant_2.eff'
     min_coverage = 5
     cov_metric = 'DP'
     reverse_split = False
@@ -167,8 +167,8 @@ def test_pass_fail_variant_3():
     when the library is forward stranded
     :return:
     """
-    vcf_file = 'test/vcf/pass_fail_variant_3.vcf'
-    output_eff = 'test/vcf/pass_fail_variant_3.eff'
+    vcf_file = 'vcf/pass_fail_variant_3.vcf'
+    output_eff = 'vcf/pass_fail_variant_3.eff'
     min_coverage = 5
     cov_metric = 'DP'
     reverse_split = False
@@ -182,8 +182,8 @@ def test_pass_fail_variant_4():
     when the library is reverse stranded
     :return:
     """
-    vcf_file = 'test/vcf/pass_fail_variant_4.vcf'
-    output_eff = 'test/vcf/pass_fail_variant_4.eff'
+    vcf_file = 'vcf/pass_fail_variant_4.vcf'
+    output_eff = 'vcf/pass_fail_variant_4.eff'
     min_coverage = 5
     cov_metric = 'DP'
     reverse_split = True
@@ -197,8 +197,8 @@ def test_pass_fail_variant_5():
     when the library is forward stranded.
     :return:
     """
-    vcf_file = 'test/vcf/pass_fail_variant_5.vcf'
-    output_eff = 'test/vcf/pass_fail_variant_5.eff'
+    vcf_file = 'vcf/pass_fail_variant_5.vcf'
+    output_eff = 'vcf/pass_fail_variant_5.eff'
     min_coverage = 5
     cov_metric = 'DP'
     reverse_split = True
@@ -212,8 +212,8 @@ def test_pass_fail_variant_6():
     when the library is reverse stranded
     :return:
     """
-    vcf_file = 'test/vcf/pass_fail_variant_6.vcf'
-    output_eff = 'test/vcf/pass_fail_variant_6.eff'
+    vcf_file = 'vcf/pass_fail_variant_6.vcf'
+    output_eff = 'vcf/pass_fail_variant_6.eff'
     min_coverage = 5
     cov_metric = 'DP'
     reverse_split = True

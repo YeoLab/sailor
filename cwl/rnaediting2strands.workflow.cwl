@@ -7,10 +7,11 @@ class: Workflow
 
 requirements:
   - class: SubworkflowFeatureRequirement
-
+  - class: InlineJavascriptRequirement
+  - class: StepInputExpressionRequirement
 
 inputs:
-
+  
   input_bam:
     type: File
 
@@ -19,7 +20,16 @@ inputs:
 
   known_snp:
     type: File
-
+  
+  gtfdb: 
+    type: File
+  
+  species: 
+    type: string
+  
+  chrom_sizes:
+    type: File
+    
   reverse_stranded_library:
     type: boolean
     default: true
@@ -129,10 +139,6 @@ outputs:
     type: File
     outputSource: fwd/rank_edits_output_bed
 
-  # fwd_rank_edits_output_vcf:
-  #   type: File
-  #   outputSource: fwd/rank_edits_output_vcf
-
   rev_sorted_bam_output:
     type: File
     outputSource: rev/sorted_bam_output
@@ -173,16 +179,38 @@ outputs:
     type: File
     outputSource: rev/rank_edits_output_bed
 
-  # rev_rank_edits_output_vcf:
-  #   type: File
-  #   outputSource: rev/rank_edits_output_vcf
-
+  combined_bedfile:
+    type: File
+    outputSource: step_combine_and_reformat/output_combined_bed
+    
+  annotated_bedfile:
+    type: File
+    outputSource: step_annotator/annotated
+    
+  fwd_bigwig:
+    type: File
+    outputSource: step_bam_to_bigwig_forward/output_bigwig
+    
+  rev_bigwig:
+    type: File
+    outputSource: step_bam_to_bigwig_reverse/output_bigwig
+    
+  scored_edits:
+    type: File
+    outputSource: step_score_edits/scored
+    
 steps:
+
+  index_reads:
+    run: samtools-index.cwl
+    in:
+      alignments: input_bam
+    out: [alignments_with_index]
 
   split_strands:
     run: split_strands.cwl
     in:
-      input_bam: input_bam
+      input_bam: index_reads/alignments_with_index
       reverse_stranded_library: reverse_stranded_library
     out: [fwd_output_bam, rev_output_bam]
     
@@ -207,9 +235,18 @@ steps:
       skip_duplicate_removal: skip_duplicate_removal
       ct: ct
       gt: gt
-    out:
-      # [sorted_bam_output, rmdup_bam_output, filtered_bam_output, mpileup_output, call_snvs_output, format_variants_output, filter_variants_output, filter_known_snp_output, rank_edits_output, rank_edits_output_vcf, rank_edits_output_bed]
-      [sorted_bam_output, rmdup_bam_output, filtered_bam_output, mpileup_output, call_snvs_output, format_variants_output, filter_variants_output, filter_known_snp_output, rank_edits_output, rank_edits_output_bed]
+    out: [
+      sorted_bam_output, 
+      rmdup_bam_output, 
+      filtered_bam_output, 
+      mpileup_output, 
+      call_snvs_output, 
+      format_variants_output, 
+      filter_variants_output, 
+      filter_known_snp_output,
+      rank_edits_output, 
+      rank_edits_output_bed
+    ]
 
   rev:
     run: rnaediting1strand.cwl
@@ -232,8 +269,99 @@ steps:
       skip_duplicate_removal: skip_duplicate_removal
       ct: ct
       gt: gt
-    out:
-      # [sorted_bam_output, rmdup_bam_output, filtered_bam_output, mpileup_output, call_snvs_output, format_variants_output, filter_variants_output, filter_known_snp_output, rank_edits_output, rank_edits_output_vcf, rank_edits_output_bed]
-      [sorted_bam_output, rmdup_bam_output, filtered_bam_output, mpileup_output, call_snvs_output, format_variants_output, filter_variants_output, filter_known_snp_output, rank_edits_output, rank_edits_output_bed]
+    out: [
+      sorted_bam_output, 
+      rmdup_bam_output, 
+      filtered_bam_output, 
+      mpileup_output, 
+      call_snvs_output, 
+      format_variants_output, 
+      filter_variants_output, 
+      filter_known_snp_output, 
+      rank_edits_output, 
+      rank_edits_output_bed
+    ]
     
-
+  ### ADDED FOR STAMP ANALYSIS ###
+  
+  step_combine_and_reformat:
+    run: combine_and_reformat.cwl
+    in:
+      forward_edits: fwd/rank_edits_output_bed
+      reverse_edits: rev/rank_edits_output_bed
+      force_overwrite: 
+        default: true
+    out: [output_combined_bed]
+  
+  step_annotator:
+    run: annotator.cwl
+    in:
+      input_bed: step_combine_and_reformat/output_combined_bed
+      gtfdb: gtfdb
+      species: species
+    out: [annotated]
+    
+  step_bam_to_bigwig_forward:
+    run: wf_bam_to_bigwig.cwl
+    in:
+      strand:
+        source: reverse_stranded_library
+        valueFrom: |
+          ${
+            if (self == true) {
+              return "-"
+            }
+            else {
+              return "+"
+            }
+          }
+      chrom_sizes: chrom_sizes
+      input_bam: fwd/filtered_bam_output
+      split: 
+        default: true
+      bedgraph:
+        default: true
+    out: [
+      output_bedgraph,
+      output_sorted_bedgraph,
+      output_bigwig
+    ]
+    
+  step_bam_to_bigwig_reverse:
+    run: wf_bam_to_bigwig.cwl
+    in:
+      strand:
+        source: reverse_stranded_library
+        valueFrom: |
+          ${
+            if (self == true) {
+              return "+"
+            }
+            else {
+              return "-"
+            }
+          }
+      chrom_sizes: chrom_sizes
+      input_bam: rev/filtered_bam_output
+      split: 
+        default: true
+      bedgraph:
+        default: true
+    out: [
+      output_bedgraph,
+      output_sorted_bedgraph,
+      output_bigwig
+    ]
+    
+  step_score_edits:
+    run: score_edits_total_coverage.cwl
+    in:
+      annotated_edits_file: step_annotator/annotated
+      gtfdb: gtfdb
+      genome_fa: reference
+      chrom_sizes_file: chrom_sizes
+      pos_bw: step_bam_to_bigwig_forward/output_bigwig
+      neg_bw: step_bam_to_bigwig_reverse/output_bigwig
+    out: [
+      scored
+    ]

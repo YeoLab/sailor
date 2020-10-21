@@ -4,7 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.99.0] - 10-21-2020
+### Added
+- post-processing steps for STAMP analysis:
+    - combine_and_reformat
+    - annotate
+    - bam_to_bedgraph
+    - bedgraphtobigwig
+    - score_edits_total_coverage
 
+## [1.1.0] - 11-05-2019
+### Added
+- added C>T editing site discovery (adds a ct flag to the main manifest)
 
 ## [1.0.4] - 5-12-2017
 ### Added

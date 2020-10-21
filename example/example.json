@@ -1,0 +1,22 @@
+#!/usr/bin/env SAILOR
+input_bam:
+  class: File
+  path: inputs/example.bam
+known_snp:
+  class: File
+  path: inputs/hg19.commonSNPs147.bed3
+reference:
+  class: File
+  path: inputs/hg19.fa
+ct: true
+min_variant_coverage: 5
+alpha: 0
+beta: 0
+edit_fraction: 0.01
+gtfdb: 
+  class: File
+  path: inputs/gencode.v19.annotation.gtf.db
+species: hg19
+chrom_sizes: 
+  class: File
+  path:  inputs/hg19.chrom.sizes
