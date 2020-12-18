@@ -11,7 +11,7 @@ inputs:
 
   max_depth:
     type: int
-    default: 1000
+    default: 100000000
     inputBinding:
       position: 1
       prefix: -d

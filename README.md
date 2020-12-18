@@ -1,5 +1,8 @@
 ![logo](https://github.com/YeoLab/rna_editing_pipeline/blob/master/logo/sailor-logo.png)
 
+### Note: Current changes to master may be unstable! Use the frozen singularity file to reproduce paper results.
+### Note # 2: You should check whether your aligner provides the MD tag, as this is necessary to determine the non A/G mismatches between the reference and query.
+
 # Software for Accurately Identifying Locations Of RNA-editing (SAILOR)
 
 SAILOR implements published methodologies to assess adenosine to inosine changes in RNA-SEQ data for easy identification of transcriptome-wide editing. 
@@ -83,7 +86,7 @@ This parameter [true] or false specifies whether or not we're dealing with a rev
 reverse_stranded_library: true
 ```
 
-This option [true] or false specifies whether or not the reads are single or paired end. This is equivalent to the [-s option](http://www.htslib.org/doc/samtools.html) of ```samtools rmdup``` step, which is part of the workflow:
+This option [true] or false specifies whether or not the reads are single or paired end. This is equivalent to the [-s option](http://www.htslib.org/doc/samtools.html) of ```samtools rmdup``` step, which is part of the workflow. However, each read will still be split according to strand which will affect paired-end reads oriented opposite each other:
 ```YAML
 single_end: true
 ```

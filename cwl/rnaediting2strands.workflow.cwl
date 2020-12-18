@@ -201,10 +201,17 @@ outputs:
     
 steps:
 
+  step_calmd:
+    run: samtools-calmd.cwl
+    in: 
+      input_bam: input_bam
+      reference: reference
+    out: [output_bam]
+    
   index_reads:
     run: samtools-index.cwl
     in:
-      alignments: input_bam
+      alignments: step_calmd/output_bam
     out: [alignments_with_index]
 
   split_strands:
@@ -365,3 +372,16 @@ steps:
     out: [
       scored
     ]
+    
+  # step_score_exon_edits:
+  #   run: score_exon_edits_total_coverage.cwl
+  #   in:
+  #     annotated_edits_file: step_annotator/annotated
+  #     gtfdb: gtfdb
+  #     genome_fa: reference
+  #     chrom_sizes_file: chrom_sizes
+  #     pos_bw: step_bam_to_bigwig_forward/output_bigwig
+  #     neg_bw: step_bam_to_bigwig_reverse/output_bigwig
+  #   out: [
+  #     scored
+  #   ]

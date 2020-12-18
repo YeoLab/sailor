@@ -80,7 +80,6 @@ def split_strands(input_bam, output_fwd_bam, output_rev_bam, is_reverse):
         input_handle.close()
         fwd_handle.close()
         rev_handle.close()
-        print(output_fwd_bam)
         return 0
     except Exception as e:
         print(e)

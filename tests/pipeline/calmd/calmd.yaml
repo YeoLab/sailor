@@ -1,9 +1,0 @@
-#!/usr/bin/env samtools-calmd.cwl
-
-input_bam:
-  class: File
-  path: inputs/HEK-NPC-APOBEC-STAMP_possorted_genome_bam.downsampled.bam
-
-reference: 
-  class: File
-  path: inputs/genome.fa

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
-import concurrent.futures
+# import concurrent.futures
 from argparse import ArgumentParser
 from argparse import RawDescriptionHelpFormatter
 import matplotlib.pyplot as plt
@@ -96,6 +96,7 @@ def get_c_positions_and_coverage_in_window(bedtool, rdd, genome_fa):
     strand = pos.strand
     # print("{}:{}-{}:{}".format(chrom, start, end, strand))
     sequences = bedtool.sequence(fi=genome_fa, s=False, name=True) 
+    print('sequences', sequences)
     # print(sequences)
     with open(sequences.seqfn) as f:
         for record in SeqIO.parse(f, "fasta"):
@@ -110,6 +111,7 @@ def get_c_positions_and_coverage_in_window(bedtool, rdd, genome_fa):
     abspos = ["{}:{}".format(chrom, start + p) for p in relpos]
     coverage = rdd.values(chrom=chrom, start=start, end=end, strand=strand)
     coverage = [np.abs(c) for c in coverage]  # doesn't matter for how we're making bigwigs, but just to be sure. 
+    # print("coverage: {}".format(coverage))
     c_coverage = [coverage[p] for p in relpos]
     for p, c in zip(abspos, c_coverage):
         d[p] = c
@@ -264,7 +266,6 @@ def score_edits(annotated_edits_file, bg_edits_file, output_file, conf, gene_pos
                 fg_sites_in_region = fg_sites_in_region[
                     ['chrom','start','end','name','conf','strand','thickStart','thickEnd']
                 ]
-                
                 # (4) Filter out bg_edits_file from fg_edits_file. 
                 fg_prefiltered_sites_bedtool = pybedtools.BedTool.from_dataframe(fg_sites_in_region) 
                 if bg_edits_file is not None:
@@ -275,7 +276,6 @@ def score_edits(annotated_edits_file, bg_edits_file, output_file, conf, gene_pos
                 if len(fg_sites_bedtool) > 0: # If the background file totally removes all edits from the foreground file, we might get an EmptyDataFrame
                     # (5) Open a window centered around every edit site.
                     fg_windows_bedtool = create_window_intervals(fg_sites_bedtool, flank, chrom_sizes_dict)
-
                     # (6) Intersect with all edits from (3) to collect all edits that exist within the window.
                     intersected_edits = fg_windows_bedtool.intersect(
                         fg_sites_bedtool, s=True, wa=True, loj=True

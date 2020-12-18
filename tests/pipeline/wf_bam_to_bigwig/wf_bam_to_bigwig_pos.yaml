@@ -1,9 +1,0 @@
-#!/usr/bin/env wf_bam_to_bigwig.cwl
-
-strand: "-"
-chrom_sizes: 
-  class: File
-  path: inputs/hg19.chrom.sizes
-input_bam:
-  class: File
-  path: inputs/APOBEC_only_0_merged_R1.fastqTr.sorted.STARUnmapped.out.sorted.STARAligned.out.sorted_a0_b0_e0.01.fwd.sorted.rmdup.readfiltered.bam
